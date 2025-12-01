@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Menu, X, Linkedin, Mail, Smartphone, 
-  Terminal, Bot, Layout, CheckCircle2, 
+import {
+  Menu, X, Linkedin, Mail, Smartphone,
+  Terminal, Bot, Layout, CheckCircle2,
   GraduationCap, Sun, Moon, Code, Sparkles, Loader2, Lightbulb
 } from 'lucide-react';
 
@@ -9,16 +9,16 @@ export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   // NUEVO ESTADO PARA EL TEMA
-  const [theme, setTheme] = useState('dark'); 
-  
+  const [theme, setTheme] = useState('dark');
+
   // --- ESTADOS PARA FUNCIONES IA ---
   const [aiLoading, setAiLoading] = useState({ draft: false, ideas: false });
   const [businessInput, setBusinessInput] = useState('');
   const [generatedIdeas, setGeneratedIdeas] = useState(null);
-  
+
   const canvasRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  
+
   // --- Estado y Manejadores del Formulario de Contacto ---
   const [formData, setFormData] = useState({
     name: '',
@@ -35,12 +35,7 @@ export default function Portfolio() {
 
   // --- INTEGRACIÓN GEMINI API ---
   const callGemini = async (prompt) => {
-    // CORRECCIÓN DE ERROR DE COMPILACIÓN:
-    // Hemos simplificado esto temporalmente para evitar el error "import.meta is not available".
-    // 1. Para pruebas locales: Pega tu API Key dentro de las comillas vacías abajo.
-    // 2. Para producción (Vercel): Puedes descomentar la línea de import.meta si configuras el target a ES2020+.
-    
-    const apiKey = ""; 
+    // Usar variable de entorno para la API Key
     const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
 
     if (!apiKey) {
@@ -110,16 +105,17 @@ export default function Portfolio() {
     setSubmitMessage('');
 
     // --- CONFIGURACIÓN DE ENVÍO REAL ---
-    const formspreeEndpoint = "https://formspree.io/f/xldyyknb"; 
+    // Usar variable de entorno o fallback (aunque el fallback debería ser tu URL real si quieres que funcione por defecto)
+    const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/xldyyknb";
 
-    // Verificación de seguridad
-    if (!formspreeEndpoint || formspreeEndpoint === "https://formspree.io/f/xldyyknb") {
-        console.warn("⚠️ FALTA CONFIGURAR FORMSPREE");
-        setTimeout(() => {
-            setIsSubmitting(false);
-            setSubmitMessage('⚠️ ATENCIÓN: Algo salio mal favor de contactar directamente al correo: danielsilvestredj@gmail.com.');
-        }, 1000);
-        return;
+    // Verificación básica
+    if (!formspreeEndpoint) {
+      console.warn("⚠️ FALTA CONFIGURAR FORMSPREE");
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSubmitMessage('⚠️ ATENCIÓN: Falta configuración del formulario.');
+      }, 1000);
+      return;
     }
 
     try {
@@ -133,7 +129,7 @@ export default function Portfolio() {
 
       if (response.ok) {
         setSubmitMessage('¡Mensaje enviado con éxito! Daniel se pondrá en contacto contigo pronto.');
-        setFormData({ name: '', email: '', phone: '', message: '' }); 
+        setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         setSubmitMessage('Hubo un problema al enviar el mensaje. Por favor intenta contactarme por LinkedIn.');
       }
@@ -181,7 +177,7 @@ export default function Portfolio() {
       }
 
       draw() {
-        ctx.fillStyle = particleColor; 
+        ctx.fillStyle = particleColor;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -190,7 +186,7 @@ export default function Portfolio() {
 
     const init = () => {
       particles = [];
-      const numberOfParticles = Math.min(window.innerWidth / 15, 100); 
+      const numberOfParticles = Math.min(window.innerWidth / 15, 100);
       for (let i = 0; i < numberOfParticles; i++) {
         particles.push(new Particle());
       }
@@ -198,14 +194,14 @@ export default function Portfolio() {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       particles.forEach(particle => {
         particle.update();
         particle.draw();
       });
 
       connectParticles();
-      
+
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -218,22 +214,22 @@ export default function Portfolio() {
 
           if (distance < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = lineColor.replace('0.15', `${0.15 - distance/120 * 0.15}`);
+            ctx.strokeStyle = lineColor.replace('0.15', `${0.15 - distance / 120 * 0.15}`);
             ctx.lineWidth = 1;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
           }
         }
-        
+
         // Conectar con el mouse (Interacción)
         const dxMouse = particles[i].x - mousePos.x;
         const dyMouse = particles[i].y - mousePos.y;
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-        
+
         if (distMouse < 200) {
           ctx.beginPath();
-          ctx.strokeStyle = mouseLineColor.replace('0.2', `${0.2 - distMouse/200 * 0.2}`); 
+          ctx.strokeStyle = mouseLineColor.replace('0.2', `${0.2 - distMouse / 200 * 0.2}`);
           ctx.lineWidth = 1.5;
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(mousePos.x, mousePos.y);
@@ -260,11 +256,11 @@ export default function Portfolio() {
   // Manejador de movimiento del mouse para el efecto
   const handleMouseMove = (e) => {
     const rect = canvasRef.current?.getBoundingClientRect();
-    if(rect) {
-        setMousePos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
+    if (rect) {
+      setMousePos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
     }
   };
 
@@ -322,7 +318,7 @@ export default function Portfolio() {
   const tc = themeClasses[theme]; // Atajos para las clases del tema
 
   return (
-    <div 
+    <div
       className={`min-h-screen font-sans relative ${tc.bg}`}
       onMouseMove={handleMouseMove}
     >
@@ -348,11 +344,11 @@ export default function Portfolio() {
       `}</style>
 
       {/* CANVAS FONDO INTERACTIVO */}
-      <canvas 
+      <canvas
         ref={canvasRef}
         className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-60"
       />
-      
+
       {/* --- NAVIGATION --- */}
       <nav className={`fixed top-0 w-full z-50 backdrop-blur-md border-b ${tc.navBg}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -362,7 +358,7 @@ export default function Portfolio() {
                 DS.
               </span>
             </div>
-            
+
             <div className="flex items-center">
               {/* Desktop Menu */}
               <div className="hidden md:block">
@@ -373,9 +369,8 @@ export default function Portfolio() {
                       <button
                         key={item}
                         onClick={() => scrollToSection(id)}
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:text-indigo-500 ${
-                          activeSection === id ? 'text-indigo-500 scale-105' : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')
-                        }`}
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:text-indigo-500 ${activeSection === id ? 'text-indigo-500 scale-105' : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')
+                          }`}
                       >
                         {item}
                       </button>
@@ -383,7 +378,7 @@ export default function Portfolio() {
                   })}
                 </div>
               </div>
-              
+
               {/* Theme Switch */}
               <button
                 onClick={toggleTheme}
@@ -436,22 +431,22 @@ export default function Portfolio() {
               <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
               Disponible para proyectos
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg">
               J Daniel <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Silvestre</span>
             </h1>
             <p className={`text-xl md:text-2xl ${tc.text} mb-8 max-w-2xl mx-auto md:mx-0 font-light drop-shadow-md`}>
-              QA Engineer & Consultor de Negocios. <br/>
+              QA Engineer & Consultor de Negocios. <br />
               <span className="text-indigo-400 font-normal">Fusiono la Administración de Empresas con la Inteligencia Artificial</span> para escalar PYMES.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <button 
+              <button
                 onClick={() => scrollToSection('contact')}
                 className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] z-20"
               >
                 Hablemos de tu Proyecto
               </button>
-              <button 
+              <button
                 onClick={() => scrollToSection('services')}
                 className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 hover:bg-slate-800 hover:border-slate-500 text-slate-300 hover:text-white' : 'border-slate-300 bg-white/50 hover:bg-slate-100 hover:border-slate-400 text-slate-700 hover:text-slate-900'} font-medium transition-all backdrop-blur-sm z-20`}
               >
@@ -459,54 +454,54 @@ export default function Portfolio() {
               </button>
             </div>
           </div>
-          
+
           {/* SECCIÓN DE IA REUBICADA EN LUGAR DE LA FOTO */}
           <div className="flex-1 z-10 w-full">
             {/* --- FEATURE IA: DEMO DE CONSULTORÍA --- */}
             <div className={`p-8 rounded-2xl border bg-gradient-to-br ${theme === 'dark' ? 'from-slate-900 via-indigo-950/30 to-slate-900' : 'from-white via-indigo-50 to-white'} relative overflow-hidden shadow-2xl animate-green-pulse transition-all duration-500`}>
-               <div className="absolute top-0 right-0 p-4 opacity-10">
-                 <Bot size={100} />
-               </div>
-               
-               <div className="relative z-10 text-center">
-                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-4 border border-green-500/30 shadow-[0_0_10px_rgba(74,222,128,0.3)]">
-                   <Sparkles size={12} className="animate-pulse" /> POWERED BY GEMINI API
-                 </div>
-                 <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>
-                   ¿Qué puede hacer la IA por tu negocio?
-                 </h3>
-                 <p className={`text-sm mb-6 ${tc.text}`}>
-                   Prueba mi <strong>Generador de Estrategias</strong>. Dime qué tipo de negocio tienes y te daré 3 ideas rápidas de automatización.
-                 </p>
-                 
-                 <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-6">
-                   <input 
-                     type="text" 
-                     value={businessInput}
-                     onChange={(e) => setBusinessInput(e.target.value)}
-                     placeholder="Ej: Panadería, Taller Mecánico, Abogados..."
-                     className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${tc.inputBg}`}
-                   />
-                   <button 
-                     onClick={handleGenerateIdeas}
-                     disabled={aiLoading.ideas || !businessInput}
-                     className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
-                   >
-                     {aiLoading.ideas ? <Loader2 className="animate-spin" size={20}/> : <><Lightbulb size={20}/> Generar Ideas</>}
-                   </button>
-                 </div>
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Bot size={100} />
+              </div>
 
-                 {generatedIdeas && (
-                   <div className={`text-left p-6 rounded-xl border animate-in fade-in slide-in-from-bottom-4 duration-500 ${theme === 'dark' ? 'bg-slate-950/80 border-indigo-500/50' : 'bg-white/80 border-indigo-200'} max-h-60 overflow-y-auto`}>
-                     <h4 className="text-indigo-400 font-bold mb-2 flex items-center gap-2 sticky top-0 bg-opacity-90 backdrop-blur-sm py-2">
-                       <Bot size={18}/> Estrategia Sugerida:
-                     </h4>
-                     <div className={`whitespace-pre-line text-sm leading-relaxed ${tc.text}`}>
-                       {generatedIdeas}
-                     </div>
-                   </div>
-                 )}
-               </div>
+              <div className="relative z-10 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-4 border border-green-500/30 shadow-[0_0_10px_rgba(74,222,128,0.3)]">
+                  <Sparkles size={12} className="animate-pulse" /> POWERED BY GEMINI API
+                </div>
+                <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>
+                  ¿Qué puede hacer la IA por tu negocio?
+                </h3>
+                <p className={`text-sm mb-6 ${tc.text}`}>
+                  Prueba mi <strong>Generador de Estrategias</strong>. Dime qué tipo de negocio tienes y te daré 3 ideas rápidas de automatización.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-6">
+                  <input
+                    type="text"
+                    value={businessInput}
+                    onChange={(e) => setBusinessInput(e.target.value)}
+                    placeholder="Ej: Panadería, Taller Mecánico, Abogados..."
+                    className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${tc.inputBg}`}
+                  />
+                  <button
+                    onClick={handleGenerateIdeas}
+                    disabled={aiLoading.ideas || !businessInput}
+                    className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                  >
+                    {aiLoading.ideas ? <Loader2 className="animate-spin" size={20} /> : <><Lightbulb size={20} /> Generar Ideas</>}
+                  </button>
+                </div>
+
+                {generatedIdeas && (
+                  <div className={`text-left p-6 rounded-xl border animate-in fade-in slide-in-from-bottom-4 duration-500 ${theme === 'dark' ? 'bg-slate-950/80 border-indigo-500/50' : 'bg-white/80 border-indigo-200'} max-h-60 overflow-y-auto`}>
+                    <h4 className="text-indigo-400 font-bold mb-2 flex items-center gap-2 sticky top-0 bg-opacity-90 backdrop-blur-sm py-2">
+                      <Bot size={18} /> Estrategia Sugerida:
+                    </h4>
+                    <div className={`whitespace-pre-line text-sm leading-relaxed ${tc.text}`}>
+                      {generatedIdeas}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -523,19 +518,19 @@ export default function Portfolio() {
               </h2>
               <div className={`space-y-4 leading-relaxed ${tc.text}`}>
                 <p>
-                  No soy el típico desarrollador, ni el típico administrador. Soy un híbrido. 
+                  No soy el típico desarrollador, ni el típico administrador. Soy un híbrido.
                   Como <strong className="text-indigo-500">Licenciado en Administración de Empresas</strong>, entiendo de flujos de caja, gestión de personal y dolores operativos.
                 </p>
                 <p>
-                  Como <strong className="text-blue-500">QA Engineer</strong>, tengo la disciplina técnica para crear sistemas a prueba de fallos. 
-                  Hoy, uso esa doble visión para ayudar a empresas a modernizarse mediante 
+                  Como <strong className="text-blue-500">QA Engineer</strong>, tengo la disciplina técnica para crear sistemas a prueba de fallos.
+                  Hoy, uso esa doble visión para ayudar a empresas a modernizarse mediante
                   <strong className={`${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}> Automatización e Inteligencia Artificial</strong>.
                 </p>
                 <p>
                   Mi misión es simple: eliminar el trabajo repetitivo de tu negocio para que tú te dediques a crecer.
                 </p>
               </div>
-              
+
               <div className="mt-8 grid grid-cols-2 gap-4">
                 <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-slate-950/80 border-slate-800' : 'bg-white/80 border-slate-200'} border`}>
                   <div className="text-3xl font-bold text-blue-500 mb-1">+5</div>
@@ -585,7 +580,7 @@ export default function Portfolio() {
                 Soluciones para la Era Digital
               </h2>
             </div>
-            
+
             <p className={`max-w-2xl mx-auto ${tc.text}`}>
               Especializado en modernizar PYMES mediante estrategias que combinan marketing, calidad de software y automatización inteligente.
             </p>
@@ -602,8 +597,8 @@ export default function Portfolio() {
                 Implementación de agentes de IA para atención al cliente y automatización de flujos de trabajo repetitivos. Ahorra horas hombre y reduce errores operativos.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500"/> Chatbots Inteligentes</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500"/> Automatización de Email</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Chatbots Inteligentes</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Automatización de Email</li>
               </ul>
             </div>
 
@@ -618,8 +613,8 @@ export default function Portfolio() {
                 Aseguramiento de calidad para productos digitales. Antes de lanzar tu web o app, me aseguro de que funcione perfectamente bajo cualquier condición.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500"/> Pruebas Automatizadas</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500"/> Testing de API & Móvil</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Pruebas Automatizadas</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Testing de API & Móvil</li>
               </ul>
             </div>
 
@@ -633,8 +628,8 @@ export default function Portfolio() {
                 Desarrollo de sitios web modernos (Landing Pages, Corporativas) y estrategias de marketing digital basadas en análisis de datos reales.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500"/> Sitios Web Responsivos</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500"/> Análisis de Datos (Data-Driven)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Sitios Web Responsivos</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Análisis de Datos (Data-Driven)</li>
               </ul>
             </div>
           </div>
@@ -645,9 +640,9 @@ export default function Portfolio() {
       <section id="experience" className={`relative z-10 py-20 backdrop-blur-sm ${tc.sectionBg1}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-12 text-center`}>Trayectoria Profesional</h2>
-          
+
           <div className={`relative border-l-2 ${tc.timelineBg} ml-4 md:ml-6 space-y-12`}>
-            
+
             {/* Item 1: QA Engineer & Consultor IA (2025 - Actualidad) */}
             <div className="relative pl-8 md:pl-12">
               <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
@@ -691,19 +686,19 @@ export default function Portfolio() {
               <p className={`mb-2 ${tc.text}`}>Telmex / Contactum</p>
               <p className={`text-sm ${tc.textMuted}`}>Resolución de +200 incidencias técnicas mensuales para clientes empresariales. Habilidades de comunicación técnica.</p>
             </div>
-            
+
             {/* Education Block */}
-             <div className="relative pl-8 md:pl-12 pt-8">
-               <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-slate-950/80 border-slate-700' : 'bg-white/80 border-slate-300'}`}>
-                  <h4 className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'} font-semibold mb-3`}>
-                    <GraduationCap className="text-indigo-500" size={20}/> Formación Destacada
-                  </h4>
-                  <ul className={`space-y-2 text-sm ${tc.text}`}>
-                    <li>• <strong>Lic. Administración de Empresas</strong> - Universidad Tangamanga</li>
-                    <li>• <strong>QA Engineering Bootcamp</strong> - Triple Ten</li>
-                    <li>• <strong>Certificado Diseño Didáctico</strong> - SEGE</li>
-                  </ul>
-               </div>
+            <div className="relative pl-8 md:pl-12 pt-8">
+              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-slate-950/80 border-slate-700' : 'bg-white/80 border-slate-300'}`}>
+                <h4 className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'} font-semibold mb-3`}>
+                  <GraduationCap className="text-indigo-500" size={20} /> Formación Destacada
+                </h4>
+                <ul className={`space-y-2 text-sm ${tc.text}`}>
+                  <li>• <strong>Lic. Administración de Empresas</strong> - Universidad Tangamanga</li>
+                  <li>• <strong>QA Engineering Bootcamp</strong> - Triple Ten</li>
+                  <li>• <strong>Certificado Diseño Didáctico</strong> - SEGE</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -718,7 +713,7 @@ export default function Portfolio() {
           </p>
 
           <form onSubmit={handleSubmit} className={`p-8 rounded-xl border max-w-lg mx-auto text-left shadow-2xl ${theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200'}`}>
-            
+
             {/* Mensaje de estado de envío */}
             {submitMessage && (
               <div className={`p-4 mb-4 text-sm rounded-lg ${submitMessage.includes('éxito') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'} ${submitMessage.includes('ATENCIÓN') ? 'bg-yellow-600/20 text-yellow-400' : ''}`}>
@@ -729,14 +724,14 @@ export default function Portfolio() {
             {/* Nombre */}
             <div className="mb-4">
               <label htmlFor="name" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Nombre Completo</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
+              <input
+                type="text"
+                id="name"
+                name="name"
                 value={formData.name}
                 onChange={handleFormChange}
                 required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`} 
+                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
                 placeholder="Tu nombre o el de tu empresa"
               />
             </div>
@@ -744,14 +739,14 @@ export default function Portfolio() {
             {/* Correo */}
             <div className="mb-4">
               <label htmlFor="email" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Correo Electrónico</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
+              <input
+                type="email"
+                id="email"
+                name="email"
                 value={formData.email}
                 onChange={handleFormChange}
                 required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`} 
+                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
                 placeholder="ejemplo@negocio.com"
               />
             </div>
@@ -759,17 +754,17 @@ export default function Portfolio() {
             {/* Teléfono */}
             <div className="mb-6">
               <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Teléfono (WhatsApp)</label>
-              <input 
-                type="tel" 
-                id="phone" 
-                name="phone" 
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
                 value={formData.phone}
                 onChange={handleFormChange}
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`} 
+                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
                 placeholder="55 1234 5678 (Opcional, pero acelera el contacto)"
               />
             </div>
-            
+
             {/* Mensaje/Proyecto */}
             <div className="mb-6 relative">
               <div className="flex justify-between items-center mb-1">
@@ -780,32 +775,31 @@ export default function Portfolio() {
                   type="button"
                   onClick={handleMagicDraft}
                   disabled={aiLoading.draft || !formData.message}
-                  className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${
-                    theme === 'dark' 
-                      ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30' 
+                  className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${theme === 'dark'
+                      ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30'
                       : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
-                  } disabled:opacity-50`}
+                    } disabled:opacity-50`}
                   title="Escribe una idea rápida y la IA la redactará formalmente por ti"
                 >
-                  {aiLoading.draft ? <Loader2 className="animate-spin" size={12}/> : <Sparkles size={12}/>}
+                  {aiLoading.draft ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} />}
                   {aiLoading.draft ? 'Redactando...' : 'Mejorar con IA'}
                 </button>
               </div>
               <textarea
-                id="message" 
-                name="message" 
+                id="message"
+                name="message"
                 rows="4"
                 value={formData.message}
                 onChange={handleFormChange}
                 required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none ${tc.inputBg}`} 
+                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none ${tc.inputBg}`}
                 placeholder="Escribe tus ideas (ej: necesito app para envíos) y presiona 'Mejorar con IA' para redactarlo profesionalmente..."
               />
             </div>
 
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting}
               className="w-full px-8 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-500/30 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
@@ -816,13 +810,13 @@ export default function Portfolio() {
           {/* Iconos Sociales (LinkedIn y GitHub) */}
           <div className="mt-10 flex justify-center gap-6">
             {/* LinkedIn */}
-            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer" 
-               className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}>
+            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer"
+              className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}>
               <Linkedin size={28} />
             </a>
             {/* GitHub (Usando Code icon como placeholder de GitHub) */}
-            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer" 
-               className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}>
+            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer"
+              className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}>
               <Code size={28} />
             </a>
           </div>
