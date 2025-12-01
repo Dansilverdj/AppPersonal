@@ -41,7 +41,7 @@ export default function Portfolio() {
     // 2. Para producción (Vercel): Puedes descomentar la línea de import.meta si configuras el target a ES2020+.
     
     const apiKey = ""; 
-    // const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
+    const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
 
     if (!apiKey) {
       console.warn("Falta la API Key de Gemini. La funcionalidad de IA simulará una respuesta o fallará.");
