@@ -643,7 +643,7 @@ export default function Portfolio() {
 
           <div className={`relative border-l-2 ${tc.timelineBg} ml-4 md:ml-6 space-y-12`}>
 
-            {/* Item 1: QA Engineer & Consultor IA (2025 - Actualidad) */}
+            {/* Item 1: QA Engineer & Consultor IA (2024 - Actualidad) */}
             <div className="relative pl-8 md:pl-12">
               <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
@@ -654,16 +654,6 @@ export default function Portfolio() {
               <p className={`text-sm ${tc.textMuted}`}>Desarrollo de soluciones automatizadas, pruebas de software y consultoría estratégica para PYMES en San Luis Potosí.</p>
             </div>
 
-            {/* Item 2: Administrador General (2024) */}
-            <div className="relative pl-8 md:pl-12">
-              <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-700 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Administrador General</h3>
-                <span className="text-sm text-slate-500 font-mono">2024</span>
-              </div>
-              <p className={`mb-2 ${tc.text}`}>JD Freelancer"</p>
-              <p className={`text-sm ${tc.textMuted}`}>Gestión operativa y contable. Optimización de procesos administrativos con IA.</p>
-            </div>
 
             {/* Item 3: Fundador & Gerente (2017 - 2023) */}
             <div className="relative pl-8 md:pl-12">
