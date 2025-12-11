@@ -661,8 +661,8 @@ export default function Portfolio() {
                 <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Administrador General</h3>
                 <span className="text-sm text-slate-500 font-mono">2024</span>
               </div>
-              <p className={`mb-2 ${tc.text}`}>La Zona "Smothie bar"</p>
-              <p className={`text-sm ${tc.textMuted}`}>Gestión operativa y contable. Optimización de procesos administrativos y manejo de personal.</p>
+              <p className={`mb-2 ${tc.text}`}>JD Freelancer"</p>
+              <p className={`text-sm ${tc.textMuted}`}>Gestión operativa y contable. Optimización de procesos administrativos con IA.</p>
             </div>
 
             {/* Item 3: Fundador & Gerente (2017 - 2023) */}
