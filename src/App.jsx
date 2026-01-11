@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu, X, Linkedin, Mail, Smartphone,
   Terminal, Bot, Layout, CheckCircle2,
-  GraduationCap, Sun, Moon, Code, Sparkles, Loader2, Lightbulb
+  GraduationCap, Sun, Moon, Code, Sparkles, Loader2, Lightbulb,
+  ArrowRight, TrendingUp, Users, ShieldCheck, Quote
 } from 'lucide-react';
 
 export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  // NUEVO ESTADO PARA EL TEMA
   const [theme, setTheme] = useState('dark');
 
   // --- ESTADOS PARA FUNCIONES IA ---
@@ -17,7 +17,8 @@ export default function Portfolio() {
   const [generatedIdeas, setGeneratedIdeas] = useState(null);
 
   const canvasRef = useRef(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  // OPTIMIZACIÓN: Usamos useRef para la posición del mouse (evita re-renders masivos)
+  const mousePosRef = useRef({ x: 0, y: 0 });
 
   // --- Estado y Manejadores del Formulario de Contacto ---
   const [formData, setFormData] = useState({
@@ -35,16 +36,16 @@ export default function Portfolio() {
 
   // --- INTEGRACIÓN GEMINI API ---
   const callGemini = async (prompt) => {
-    // Usar variable de entorno para la API Key
     const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
 
     if (!apiKey) {
-      console.warn("Falta la API Key de Gemini. La funcionalidad de IA simulará una respuesta o fallará.");
+      console.warn("Falta la API Key de Gemini.");
     }
 
     try {
+      // Usamos el modelo flash por ser rápido y estable
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -70,7 +71,7 @@ export default function Portfolio() {
     const prompt = `Actúa como J Daniel Silvestre, consultor experto en QA y Administración. 
     El usuario tiene este tipo de negocio: "${businessInput}".
     Genera 3 ideas breves, innovadoras y rentables de automatización o tecnología para este negocio.
-    Formato: Lista con viñetas cortas. Usa emojis. Tono: Profesional pero entusiasta.`;
+    Formato: Lista con viñetas cortas. Usa emojis. Tono: Profesional, enfocado en ahorro de dinero o tiempo.`;
 
     const result = await callGemini(prompt);
     setGeneratedIdeas(result);
@@ -104,19 +105,7 @@ export default function Portfolio() {
     setIsSubmitting(true);
     setSubmitMessage('');
 
-    // --- CONFIGURACIÓN DE ENVÍO REAL ---
-    // Usar variable de entorno o fallback (aunque el fallback debería ser tu URL real si quieres que funcione por defecto)
     const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/xldyyknb";
-
-    // Verificación básica
-    if (!formspreeEndpoint) {
-      console.warn("⚠️ FALTA CONFIGURAR FORMSPREE");
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setSubmitMessage('⚠️ ATENCIÓN: Falta configuración del formulario.');
-      }, 1000);
-      return;
-    }
 
     try {
       const response = await fetch(formspreeEndpoint, {
@@ -128,7 +117,7 @@ export default function Portfolio() {
       });
 
       if (response.ok) {
-        setSubmitMessage('¡Mensaje enviado con éxito! Daniel se pondrá en contacto contigo pronto.');
+        setSubmitMessage('¡Mensaje enviado con éxito! Analizaré tu caso y te responderé pronto.');
         setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
         setSubmitMessage('Hubo un problema al enviar el mensaje. Por favor intenta contactarme por LinkedIn.');
@@ -141,7 +130,7 @@ export default function Portfolio() {
   };
   // --------------------------------------------------
 
-  // --- EFECTO DE FONDO INTERACTIVO (PARTÍCULAS/RED NEURONAL) ---
+  // --- EFECTO DE FONDO INTERACTIVO (OPTIMIZADO CON USE REF) ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -162,7 +151,7 @@ export default function Portfolio() {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 0.5; // Velocidad lenta
+        this.vx = (Math.random() - 0.5) * 0.5;
         this.vy = (Math.random() - 0.5) * 0.5;
         this.size = Math.random() * 2 + 1;
       }
@@ -170,8 +159,6 @@ export default function Portfolio() {
       update() {
         this.x += this.vx;
         this.y += this.vy;
-
-        // Rebotar en bordes
         if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
         if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
       }
@@ -201,11 +188,14 @@ export default function Portfolio() {
       });
 
       connectParticles();
-
       animationFrameId = requestAnimationFrame(animate);
     };
 
     const connectParticles = () => {
+      // Leemos la posición del Ref (NO provoca re-render)
+      const mouseX = mousePosRef.current.x;
+      const mouseY = mousePosRef.current.y;
+
       for (let i = 0; i < particles.length; i++) {
         for (let j = i; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -222,9 +212,9 @@ export default function Portfolio() {
           }
         }
 
-        // Conectar con el mouse (Interacción)
-        const dxMouse = particles[i].x - mousePos.x;
-        const dyMouse = particles[i].y - mousePos.y;
+        // Conectar con el mouse
+        const dxMouse = particles[i].x - mouseX;
+        const dyMouse = particles[i].y - mouseY;
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
 
         if (distMouse < 200) {
@@ -232,7 +222,7 @@ export default function Portfolio() {
           ctx.strokeStyle = mouseLineColor.replace('0.2', `${0.2 - distMouse / 200 * 0.2}`);
           ctx.lineWidth = 1.5;
           ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(mousePos.x, mousePos.y);
+          ctx.lineTo(mouseX, mouseY);
           ctx.stroke();
         }
       }
@@ -251,20 +241,19 @@ export default function Portfolio() {
       window.removeEventListener('resize', resizeCanvas);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mousePos, theme]); // DEPENDENCIA DE TEMA AÑADIDA
+  }, [theme]); // NOTA: 'mousePos' eliminado de dependencias
 
-  // Manejador de movimiento del mouse para el efecto
   const handleMouseMove = (e) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect) {
-      setMousePos({
+      // Actualizamos Ref (sin re-render)
+      mousePosRef.current = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
-      });
+      };
     }
   };
 
-  // Navegación suave
   const scrollToSection = (id) => {
     setIsMenuOpen(false);
     const element = document.getElementById(id);
@@ -276,7 +265,7 @@ export default function Portfolio() {
   // Detectar sección activa
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'services', 'experience', 'contact'];
+      const sections = ['home', 'services', 'cases', 'about', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -297,9 +286,9 @@ export default function Portfolio() {
       sectionBg1: 'bg-slate-900/80 border-slate-800',
       sectionBg2: 'bg-slate-950/80',
       cardBg: 'bg-slate-900/90 border-slate-800 hover:border-blue-500/50',
-      timelineBg: 'border-slate-800',
       text: 'text-slate-300',
       textMuted: 'text-slate-500',
+      textHighlight: 'text-white',
       inputBg: 'bg-slate-800 border-slate-700 text-white placeholder-slate-500',
     },
     light: {
@@ -308,42 +297,31 @@ export default function Portfolio() {
       sectionBg1: 'bg-slate-100/90 border-slate-200',
       sectionBg2: 'bg-slate-50/90',
       cardBg: 'bg-white/90 border-slate-200 hover:border-indigo-500/50',
-      timelineBg: 'border-slate-300',
       text: 'text-slate-600',
       textMuted: 'text-slate-500',
+      textHighlight: 'text-slate-900',
       inputBg: 'bg-white border-slate-300 text-slate-800 placeholder-slate-400',
     }
   };
 
-  const tc = themeClasses[theme]; // Atajos para las clases del tema
+  const tc = themeClasses[theme];
 
   return (
     <div
       className={`min-h-screen font-sans relative ${tc.bg}`}
       onMouseMove={handleMouseMove}
     >
-      {/* ESTILOS PERSONALIZADOS PARA LA ANIMACIÓN VERDE */}
+      {/* Estilos Animación Verde */}
       <style>{`
         @keyframes greenPulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
-            border-color: rgba(74, 222, 128, 0.2);
-          }
-          50% {
-            box-shadow: 0 0 20px 0 rgba(74, 222, 128, 0.4);
-            border-color: rgba(74, 222, 128, 1);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
-            border-color: rgba(74, 222, 128, 0.2);
-          }
+          0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); border-color: rgba(74, 222, 128, 0.2); }
+          50% { box-shadow: 0 0 20px 0 rgba(74, 222, 128, 0.4); border-color: rgba(74, 222, 128, 1); }
+          100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); border-color: rgba(74, 222, 128, 0.2); }
         }
-        .animate-green-pulse {
-          animation: greenPulse 3s infinite ease-in-out;
-        }
+        .animate-green-pulse { animation: greenPulse 3s infinite ease-in-out; }
       `}</style>
 
-      {/* CANVAS FONDO INTERACTIVO */}
+      {/* CANVAS FONDO */}
       <canvas
         ref={canvasRef}
         className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-60"
@@ -351,7 +329,7 @@ export default function Portfolio() {
 
       {/* --- NAVIGATION --- */}
       <nav className={`fixed top-0 w-full z-50 backdrop-blur-md border-b ${tc.navBg}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 cursor-pointer" onClick={() => scrollToSection('home')}>
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
@@ -360,11 +338,10 @@ export default function Portfolio() {
             </div>
 
             <div className="flex items-center">
-              {/* Desktop Menu */}
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-8">
-                  {['Inicio', 'Sobre Mí', 'Servicios', 'Trayectoria', 'Contacto'].map((item, index) => {
-                    const id = ['home', 'about', 'services', 'experience', 'contact'][index];
+                  {['Inicio', 'Servicios', 'Casos de Éxito', 'Filosofía', 'Contacto'].map((item, index) => {
+                    const id = ['home', 'services', 'cases', 'about', 'contact'][index];
                     return (
                       <button
                         key={item}
@@ -379,20 +356,17 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Theme Switch */}
               <button
                 onClick={toggleTheme}
                 className={`ml-4 p-2 rounded-full transition-colors ${theme === 'dark' ? 'text-yellow-400 hover:bg-slate-800' : 'text-indigo-600 hover:bg-slate-100'}`}
-                aria-label="Toggle theme"
               >
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
 
-              {/* Mobile Menu Button */}
               <div className="md:hidden ml-2">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className={`inline-flex items-center justify-center p-2 rounded-md ${theme === 'dark' ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'} focus:outline-none`}
+                  className={`p-2 rounded-md ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600'}`}
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
@@ -401,17 +375,17 @@ export default function Portfolio() {
           </div>
         </div>
 
-        {/* Mobile Menu Panel */}
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className={`md:hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} border-b`}>
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {['Inicio', 'Sobre Mí', 'Servicios', 'Trayectoria', 'Contacto'].map((item, index) => {
-                const id = ['home', 'about', 'services', 'experience', 'contact'][index];
+              {['Inicio', 'Servicios', 'Casos de Éxito', 'Filosofía', 'Contacto'].map((item, index) => {
+                const id = ['home', 'services', 'cases', 'about', 'contact'][index];
                 return (
                   <button
                     key={item}
                     onClick={() => scrollToSection(id)}
-                    className={`block w-full text-left px-3 py-3 rounded-md text-base font-medium ${theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-slate-800' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200'}`}
+                    className={`block w-full text-left px-3 py-3 rounded-md text-base font-medium ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'}`}
                   >
                     {item}
                   </button>
@@ -422,56 +396,57 @@ export default function Portfolio() {
         )}
       </nav>
 
-      {/* --- HERO SECTION --- */}
+      {/* --- HERO SECTION (VENTAS) --- */}
       <section id="home" className="relative z-10 pt-32 pb-20 md:pt-40 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col-reverse md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
-            {/* BADGE ACTUALIZADO A VERDE Y CON ANIMACIÓN DE PULSO */}
-            <div className={`inline-flex items-center px-3 py-1 rounded-full border border-green-500/30 ${theme === 'dark' ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-green-700'} text-sm font-medium mb-6 backdrop-blur-sm animate-green-pulse transition-all duration-500`}>
+            <div className={`inline-flex items-center px-3 py-1 rounded-full border border-green-500/30 ${theme === 'dark' ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-green-700'} text-sm font-medium mb-6 backdrop-blur-sm animate-green-pulse`}>
               <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-              Disponible para proyectos
+              Consultoría Abierta para PYMES
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg">
-              J Daniel <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Silvestre</span>
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg leading-tight">
+              Transformo Negocios con <br />
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+                Datos, Procesos e IA
+              </span>
             </h1>
-            <p className={`text-xl md:text-2xl ${tc.text} mb-8 max-w-2xl mx-auto md:mx-0 font-light drop-shadow-md`}>
-              QA Engineer & Consultor de Negocios. <br />
-              <span className="text-indigo-400 font-normal">Fusiono la Administración de Empresas con la Inteligencia Artificial</span> para escalar PYMES.
+            <p className={`text-xl md:text-2xl ${tc.text} mb-8 max-w-2xl mx-auto md:mx-0 font-light`}>
+              No solo desarrollo software. <span className={`${tc.textHighlight} font-semibold`}>Diseño rentabilidad.</span><br />
+              Optimiza operaciones, reduce errores y escala tu empresa con estrategias tecnológicas a medida.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <button
                 onClick={() => scrollToSection('contact')}
-                className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] z-20"
+                className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/50 z-20 flex items-center justify-center gap-2"
               >
-                Hablemos de tu Proyecto
+                Solicitar Diagnóstico <ArrowRight size={20} />
               </button>
               <button
-                onClick={() => scrollToSection('services')}
-                className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 hover:bg-slate-800 hover:border-slate-500 text-slate-300 hover:text-white' : 'border-slate-300 bg-white/50 hover:bg-slate-100 hover:border-slate-400 text-slate-700 hover:text-slate-900'} font-medium transition-all backdrop-blur-sm z-20`}
+                onClick={() => scrollToSection('cases')}
+                className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 text-slate-300' : 'border-slate-300 bg-white/50 text-slate-700'} font-medium transition-all backdrop-blur-sm z-20`}
               >
-                Ver Servicios
+                Ver Resultados
               </button>
             </div>
           </div>
 
-          {/* SECCIÓN DE IA REUBICADA EN LUGAR DE LA FOTO */}
+          {/* GENERADOR DE ESTRATEGIAS (HOOK DE VENTA) */}
           <div className="flex-1 z-10 w-full">
-            {/* --- FEATURE IA: DEMO DE CONSULTORÍA --- */}
-            <div className={`p-8 rounded-2xl border bg-gradient-to-br ${theme === 'dark' ? 'from-slate-900 via-indigo-950/30 to-slate-900' : 'from-white via-indigo-50 to-white'} relative overflow-hidden shadow-2xl animate-green-pulse transition-all duration-500`}>
+            <div className={`p-8 rounded-2xl border bg-gradient-to-br ${theme === 'dark' ? 'from-slate-900 via-indigo-950/30 to-slate-900' : 'from-white via-indigo-50 to-white'} relative overflow-hidden shadow-2xl animate-green-pulse`}>
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <Bot size={100} />
               </div>
 
               <div className="relative z-10 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-4 border border-green-500/30 shadow-[0_0_10px_rgba(74,222,128,0.3)]">
-                  <Sparkles size={12} className="animate-pulse" /> POWERED BY GEMINI API
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-4 border border-green-500/30">
+                  <Sparkles size={12} className="animate-pulse" /> DEMO GRATUITA: CONSULTOR IA
                 </div>
-                <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>
-                  ¿Qué puede hacer la IA por tu negocio?
+                <h3 className={`text-2xl font-bold ${tc.textHighlight} mb-3`}>
+                  ¿Cómo puedes ahorrar dinero hoy?
                 </h3>
                 <p className={`text-sm mb-6 ${tc.text}`}>
-                  Prueba mi <strong>Generador de Estrategias</strong>. Dime qué tipo de negocio tienes y te daré 3 ideas rápidas de automatización.
+                  Escribe tu giro de negocio (ej: Restaurante, Taller, Clínica) y obtén <strong>3 ideas inmediatas de automatización</strong>.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-6">
@@ -479,22 +454,22 @@ export default function Portfolio() {
                     type="text"
                     value={businessInput}
                     onChange={(e) => setBusinessInput(e.target.value)}
-                    placeholder="Ej: Panadería, Taller Mecánico, Abogados..."
+                    placeholder="Ej: Gimnasio, Ferretería..."
                     className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${tc.inputBg}`}
                   />
                   <button
                     onClick={handleGenerateIdeas}
                     disabled={aiLoading.ideas || !businessInput}
-                    className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                    className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg flex items-center justify-center gap-2"
                   >
-                    {aiLoading.ideas ? <Loader2 className="animate-spin" size={20} /> : <><Lightbulb size={20} /> Generar Ideas</>}
+                    {aiLoading.ideas ? <Loader2 className="animate-spin" size={20} /> : <><Lightbulb size={20} /> Generar</>}
                   </button>
                 </div>
 
                 {generatedIdeas && (
                   <div className={`text-left p-6 rounded-xl border animate-in fade-in slide-in-from-bottom-4 duration-500 ${theme === 'dark' ? 'bg-slate-950/80 border-indigo-500/50' : 'bg-white/80 border-indigo-200'} max-h-60 overflow-y-auto`}>
                     <h4 className="text-indigo-400 font-bold mb-2 flex items-center gap-2 sticky top-0 bg-opacity-90 backdrop-blur-sm py-2">
-                      <Bot size={18} /> Estrategia Sugerida:
+                      <Bot size={18} /> Oportunidades Detectadas:
                     </h4>
                     <div className={`whitespace-pre-line text-sm leading-relaxed ${tc.text}`}>
                       {generatedIdeas}
@@ -507,186 +482,229 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- ABOUT SECTION --- */}
-      <section id="about" className={`relative z-10 py-20 backdrop-blur-sm ${tc.sectionBg1}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-6 flex items-center gap-3`}>
-                <Terminal className="text-blue-500" />
-                El puente entre Negocio y Código
-              </h2>
-              <div className={`space-y-4 leading-relaxed ${tc.text}`}>
-                <p>
-                  No soy el típico desarrollador, ni el típico administrador. Soy un híbrido.
-                  Como <strong className="text-indigo-500">Licenciado en Administración de Empresas</strong>, entiendo de flujos de caja, gestión de personal y dolores operativos.
-                </p>
-                <p>
-                  Como <strong className="text-blue-500">QA Engineer</strong>, tengo la disciplina técnica para crear sistemas a prueba de fallos.
-                  Hoy, uso esa doble visión para ayudar a empresas a modernizarse mediante
-                  <strong className={`${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}> Automatización e Inteligencia Artificial</strong>.
-                </p>
-                <p>
-                  Mi misión es simple: eliminar el trabajo repetitivo de tu negocio para que tú te dediques a crecer.
-                </p>
-              </div>
-
-              <div className="mt-8 grid grid-cols-2 gap-4">
-                <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-slate-950/80 border-slate-800' : 'bg-white/80 border-slate-200'} border`}>
-                  <div className="text-3xl font-bold text-blue-500 mb-1">+5</div>
-                  <div className={`text-sm ${tc.textMuted}`}>Años Gestionando Proyectos</div>
-                </div>
-                <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-slate-950/80 border-slate-800' : 'bg-white/80 border-slate-200'} border`}>
-                  <div className="text-3xl font-bold text-indigo-500 mb-1">+200</div>
-                  <div className={`text-sm ${tc.textMuted}`}>Incidencias Técnicas Resueltas/Mes</div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-6`}>Mi Stack Tecnológico</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { name: 'Python', icon: '🐍', level: 'Backend & Scripts' },
-                  { name: 'Selenium', icon: '🤖', level: 'Automatización' },
-                  { name: 'SQL', icon: '🗄️', level: 'Bases de Datos' },
-                  { name: 'JIRA', icon: '📋', level: 'Gestión Ágil' },
-                  { name: 'Postman', icon: '🚀', level: 'API Testing' },
-                  { name: 'IA Agents', icon: '🧠', level: 'Consultoría IA' },
-                  { name: 'SPSS', icon: '📊', level: 'Análisis de Datos' },
-                  { name: 'React', icon: '⚛️', level: 'Desarrollo Web' },
-                ].map((tech) => (
-                  <div key={tech.name} className={`flex items-center gap-3 p-3 rounded-lg border ${theme === 'dark' ? 'bg-slate-950/80 border-slate-800 hover:border-blue-500/50' : 'bg-white/80 border-slate-200 hover:border-indigo-500/50'} transition-colors`}>
-                    <span className="text-2xl">{tech.icon}</span>
-                    <div>
-                      <div className={`${theme === 'dark' ? 'text-slate-200' : 'text-slate-800'} font-medium`}>{tech.name}</div>
-                      <div className="text-xs text-slate-500">{tech.level}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* --- SERVICES SECTION --- */}
       <section id="services" className="relative z-10 py-20 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            {/* TÍTULO CON EFECTO DE PULSO VERDE AÑADIDO */}
-            <div className={`inline-block px-8 py-4 rounded-2xl border border-green-500/30 ${theme === 'dark' ? 'bg-slate-900/80' : 'bg-white/80'} backdrop-blur-sm animate-green-pulse mb-6 shadow-xl`}>
-              <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-500`}>
-                Soluciones para la Era Digital
-              </h2>
-            </div>
-
+            <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-4`}>
+              Soluciones Integrales
+            </h2>
             <p className={`max-w-2xl mx-auto ${tc.text}`}>
-              Especializado en modernizar PYMES mediante estrategias que combinan marketing, calidad de software y automatización inteligente.
+              Combino la administración tradicional con tecnología de punta para crear sistemas que funcionan solos.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Servicio 1 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
-              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-500/20 transition-colors">
-                <Bot className="w-8 h-8 text-purple-400" />
+              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
+                <TrendingUp className="w-8 h-8 text-purple-400" />
               </div>
-              <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>Consultoría IA & Automatización</h3>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Consultoría de Procesos & IA</h3>
               <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                Implementación de agentes de IA para atención al cliente y automatización de flujos de trabajo repetitivos. Ahorra horas hombre y reduce errores operativos.
+                Analizo tus flujos de trabajo actuales para eliminar cuellos de botella. Implemento Chatbots y Agentes IA que trabajan 24/7.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Chatbots Inteligentes</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Automatización de Email</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Reducción de Costos Operativos</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Atención al Cliente Automatizada</li>
               </ul>
             </div>
 
             {/* Servicio 2 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 relative shadow-lg`}>
-              <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Core Skill</div>
-              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-500/20 transition-colors">
-                <CheckCircle2 className="w-8 h-8 text-blue-400" />
+              <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Especialidad</div>
+              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
+                <ShieldCheck className="w-8 h-8 text-blue-400" />
               </div>
-              <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>QA & Testing de Software</h3>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Calidad de Software (QA)</h3>
               <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                Aseguramiento de calidad para productos digitales. Antes de lanzar tu web o app, me aseguro de que funcione perfectamente bajo cualquier condición.
+                ¿Ya tienes software pero falla? Audito y mejoro la calidad de tus sistemas para asegurar que no pierdas ventas por errores técnicos.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
                 <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Pruebas Automatizadas</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Testing de API & Móvil</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Estabilidad Garantizada</li>
               </ul>
             </div>
 
             {/* Servicio 3 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
-              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition-colors">
+              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6">
                 <Layout className="w-8 h-8 text-emerald-400" />
               </div>
-              <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-3`}>Web Dev & Marketing Tech</h3>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Desarrollo Web Estratégico</h3>
               <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                Desarrollo de sitios web modernos (Landing Pages, Corporativas) y estrategias de marketing digital basadas en análisis de datos reales.
+                No solo "hago páginas web". Construyo herramientas de venta y plataformas de gestión interna (Dashboards) para dueños de negocio.
               </p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Sitios Web Responsivos</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Análisis de Datos (Data-Driven)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Paneles de Control (Dashboards)</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Integración con Pasarelas de Pago</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- EXPERIENCE / TIMELINE --- */}
-      <section id="experience" className={`relative z-10 py-20 backdrop-blur-sm ${tc.sectionBg1}`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-12 text-center`}>Trayectoria Profesional</h2>
+      {/* --- SUCCESS STORIES / CASE STUDIES SECTION --- */}
+      <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+            <div>
+              <h2 className={`text-3xl font-bold ${tc.textHighlight} mb-4 flex items-center gap-3`}>
+                <TrendingUp className="text-green-500" /> Casos de Éxito
+              </h2>
+              <p className={`max-w-2xl ${tc.text}`}>
+                Resultados reales en empresas reales. Así es como transformamos problemas en ventajas competitivas.
+              </p>
+            </div>
+            <div className="hidden md:block">
+              <span className={`text-sm ${tc.textMuted}`}>Desliza para ver más &rarr;</span>
+            </div>
+          </div>
 
-          <div className={`relative border-l-2 ${tc.timelineBg} ml-4 md:ml-6 space-y-12`}>
+          {/* CONTENEDOR DEL CASO DE ESTUDIO (Diseño destacado para 1 solo caso por ahora) */}
+          <div className={`rounded-3xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
+            <div className="grid lg:grid-cols-2">
+              
+              {/* Lado Izquierdo: Información */}
+              <div className="p-8 md:p-12 flex flex-col justify-center">
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    GIMNASIOS & FITNESS
+                  </span>
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                    AUTOMATIZACIÓN
+                  </span>
+                </div>
 
-            {/* Item 1: QA Engineer & Consultor IA (2024 - Actualidad) */}
-            <div className="relative pl-8 md:pl-12">
-              <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>QA Engineer & Consultor IA</h3>
-                <span className="text-sm text-blue-500 font-mono bg-blue-500/10 px-2 py-1 rounded">2025 - Actualidad</span>
+                <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>
+                  Modernización Integral: <br/> "F1rstGym"
+                </h3>
+
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>El Reto</h4>
+                    <p className={`${tc.text} leading-relaxed`}>
+                      Gestión manual basada en papel y Excel. Fugas de dinero por accesos no controlados y alta carga administrativa para el dueño, impidiendo el crecimiento de sucursales.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>La Solución</h4>
+                    <p className={`${tc.text} leading-relaxed`}>
+                      Desarrollo de <strong>"GymControl"</strong>: Una plataforma web personalizada conectada a lectores biométricos. Automatización de check-ins, recordatorios de pago por WhatsApp y panel financiero en tiempo real.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 border-t border-b py-6 mb-8 border-slate-700/50">
+                  <div>
+                    <div className="text-2xl font-bold text-green-500">100%</div>
+                    <div className="text-xs text-slate-500">Control de Accesos</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-blue-500">-15h</div>
+                    <div className="text-xs text-slate-500">Admin Semanal</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-purple-500">0%</div>
+                    <div className="text-xs text-slate-500">Cartera Vencida</div>
+                  </div>
+                </div>
+
+                {/* Testimonio pequeño (Opcional) */}
+                <div className={`italic text-sm ${tc.textMuted} flex gap-3`}>
+                  <Quote size={20} className="text-slate-600 flex-shrink-0" />
+                  "El sistema se pagó solo en el primer mes al recuperar cuotas perdidas. Ahora tengo control total desde mi celular."
+                </div>
               </div>
-              <p className={`mb-2 ${tc.text}`}>Freelance / Proyectos Propios</p>
-              <p className={`text-sm ${tc.textMuted}`}>Desarrollo de soluciones automatizadas, pruebas de software y consultoría estratégica para PYMES en San Luis Potosí.</p>
+
+              {/* Lado Derecho: Visuales */}
+              <div className={`relative h-64 lg:h-auto overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'} flex items-center justify-center group`}>
+                {/* PLACEHOLDER DE IMAGEN:
+                   Cuando tengas la captura real, cambia la etiqueta <img> de abajo.
+                   Por ahora, uso un div con icono o una imagen de placeholder.
+                */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 flex flex-col justify-end p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <p className="text-white font-medium">Dashboard Administrativo & Control de Acceso</p>
+                </div>
+                
+                {/* Reemplaza src con tu imagen real: src="/assets/gym-project.jpg" */}
+                {/* Si no hay imagen, este div sirve de placeholder visual */}
+                <div className="text-center p-10 opacity-50">
+                   <Layout size={64} className="mx-auto mb-4 text-slate-400"/>
+                   <p className="text-slate-500 font-mono text-sm">Captura del Sistema (Próximamente)</p>
+                   {/* <img src="/tu-imagen-aqui.jpg" className="absolute inset-0 w-full h-full object-cover" alt="Proyecto Gym" /> */}
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
+          <div className="mt-8 text-center">
+            <p className={`text-sm ${tc.textMuted}`}>¿Quieres ver más detalles técnicos o una demo?</p>
+            <button onClick={() => scrollToSection('contact')} className="mt-2 text-indigo-500 hover:text-indigo-400 font-semibold text-sm underline underline-offset-4">
+              Agenda una demostración
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* --- PHILOSOPHY / ABOUT SECTION --- */}
+      <section id="about" className={`relative z-10 py-20 backdrop-blur-sm ${tc.sectionBg2}`}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className={`text-3xl font-bold ${tc.textHighlight} mb-6 flex items-center gap-3`}>
+                <Terminal className="text-blue-500" />
+                Mi Filosofía de Trabajo
+              </h2>
+              <div className={`space-y-4 leading-relaxed ${tc.text}`}>
+                <p>
+                  Muchos consultores te entregan un documento PDF y se van. Muchos programadores te entregan código y no entienden tu negocio.
+                </p>
+                <p>
+                  Yo soy el punto medio. Como <strong className="text-indigo-500">Administrador de Empresas</strong>, entiendo de flujos de caja y ROI. Como <strong className="text-blue-500">QA Engineer</strong>, entiendo de sistemas robustos.
+                </p>
+                <p>
+                  No busco venderte la tecnología de moda. Busco implementar la herramienta exacta que hará que tu negocio sea más fácil de dirigir y más rentable.
+                </p>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                {/* Tech Stack simplificado para clientes */}
+                {['Automatización', 'Dashboards', 'Bases de Datos', 'Inteligencia Artificial', 'Web Apps'].map((skill) => (
+                   <span key={skill} className={`px-3 py-1 rounded-full text-xs font-medium border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-300 text-slate-700'}`}>
+                     {skill}
+                   </span>
+                ))}
+              </div>
             </div>
 
-
-            {/* Item 3: Fundador & Gerente (2017 - 2023) */}
-            <div className="relative pl-8 md:pl-12">
-              <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-700 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Fundador & Gerente</h3>
-                <span className="text-sm text-slate-500 font-mono">2017 - 2023</span>
-              </div>
-              <p className={`mb-2 ${tc.text}`}>Lotería San Luis</p>
-              <p className={`text-sm ${tc.textMuted}`}>Emprendimiento propio. Coordinación operativa, licitaciones y liderazgo de equipos multidisciplinarios bajo presión.</p>
-            </div>
-
-            {/* Item 4: Soporte Técnico B2B (2021 - 2023) */}
-            <div className="relative pl-8 md:pl-12">
-              <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-700 ring-4 ${theme === 'dark' ? 'ring-slate-900' : 'ring-slate-100'}`}></div>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Soporte Técnico B2B</h3>
-                <span className="text-sm text-slate-500 font-mono">2021 - 2022</span>
-              </div>
-              <p className={`mb-2 ${tc.text}`}>Telmex / Contactum</p>
-              <p className={`text-sm ${tc.textMuted}`}>Resolución de +200 incidencias técnicas mensuales para clientes empresariales. Habilidades de comunicación técnica.</p>
-            </div>
-
-            {/* Education Block */}
-            <div className="relative pl-8 md:pl-12 pt-8">
-              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-slate-950/80 border-slate-700' : 'bg-white/80 border-slate-300'}`}>
-                <h4 className={`flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-slate-900'} font-semibold mb-3`}>
-                  <GraduationCap className="text-indigo-500" size={20} /> Formación Destacada
-                </h4>
-                <ul className={`space-y-2 text-sm ${tc.text}`}>
-                  <li>• <strong>Lic. Administración de Empresas</strong> - Universidad Tangamanga</li>
-                  <li>• <strong>QA Engineering Bootcamp</strong> - Triple Ten</li>
-                  <li>• <strong>Certificado Diseño Didáctico</strong> - SEGE</li>
+            <div>
+              <div className={`p-8 rounded-xl border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-800' : 'bg-white/50 border-slate-200'}`}>
+                <h3 className={`text-xl font-bold ${tc.textHighlight} mb-4`}>¿Por qué elegirme?</h3>
+                <ul className="space-y-4">
+                  <li className="flex gap-3">
+                    <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
+                    <div>
+                      <strong className={`${tc.textHighlight}`}>Visión de Dueño</strong>
+                      <p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio (Lotería) por 6 años. Entiendo el estrés de la nómina y la operación.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3">
+                    <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
+                    <div>
+                      <strong className={`${tc.textHighlight}`}>Calidad Técnica</strong>
+                      <p className={`text-sm ${tc.textMuted}`}>Experiencia corporativa probando software crítico. Nada de sistemas que se caen.</p>
+                    </div>
+                  </li>
+                   <li className="flex gap-3">
+                    <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
+                    <div>
+                      <strong className={`${tc.textHighlight}`}>Trato Directo</strong>
+                      <p className={`text-sm ${tc.textMuted}`}>Sin intermediarios ni tecnicismos confusos. Hablamos de negocios.</p>
+                    </div>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -695,25 +713,24 @@ export default function Portfolio() {
       </section>
 
       {/* --- CONTACT SECTION (FORM) --- */}
-      <section id="contact" className={`relative z-10 py-20 ${tc.sectionBg2}`}>
+      <section id="contact" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'} mb-6`}>¿Listo para optimizar tu negocio?</h2>
+          <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-6`}>Hablemos de tu Proyecto</h2>
           <p className={`mb-10 max-w-xl mx-auto ${tc.text}`}>
-            Completa este breve formulario y me pondré en contacto contigo para discutir cómo puedo ayudarte a escalar tu PYME con IA y calidad de software.
+            La primera consulta de diagnóstico es gratuita. Cuéntame qué te duele hoy en tu negocio y veamos cómo solucionarlo.
           </p>
 
           <form onSubmit={handleSubmit} className={`p-8 rounded-xl border max-w-lg mx-auto text-left shadow-2xl ${theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200'}`}>
 
-            {/* Mensaje de estado de envío */}
+            {/* Mensaje de estado */}
             {submitMessage && (
               <div className={`p-4 mb-4 text-sm rounded-lg ${submitMessage.includes('éxito') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'} ${submitMessage.includes('ATENCIÓN') ? 'bg-yellow-600/20 text-yellow-400' : ''}`}>
                 {submitMessage}
               </div>
             )}
 
-            {/* Nombre */}
             <div className="mb-4">
-              <label htmlFor="name" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Nombre Completo</label>
+              <label htmlFor="name" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Nombre / Empresa</label>
               <input
                 type="text"
                 id="name"
@@ -722,11 +739,10 @@ export default function Portfolio() {
                 onChange={handleFormChange}
                 required
                 className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="Tu nombre o el de tu empresa"
+                placeholder="Tu nombre"
               />
             </div>
 
-            {/* Correo */}
             <div className="mb-4">
               <label htmlFor="email" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Correo Electrónico</label>
               <input
@@ -737,13 +753,12 @@ export default function Portfolio() {
                 onChange={handleFormChange}
                 required
                 className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="ejemplo@negocio.com"
+                placeholder="contacto@empresa.com"
               />
             </div>
 
-            {/* Teléfono */}
             <div className="mb-6">
-              <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Teléfono (WhatsApp)</label>
+              <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>WhatsApp (Opcional)</label>
               <input
                 type="tel"
                 id="phone"
@@ -751,28 +766,27 @@ export default function Portfolio() {
                 value={formData.phone}
                 onChange={handleFormChange}
                 className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="55 1234 5678 (Opcional, pero acelera el contacto)"
+                placeholder="Para respuesta rápida"
               />
             </div>
 
-            {/* Mensaje/Proyecto */}
             <div className="mb-6 relative">
               <div className="flex justify-between items-center mb-1">
                 <label htmlFor="message" className={`block text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Describe tu proyecto o necesidad
+                  ¿En qué puedo ayudarte?
                 </label>
                 <button
                   type="button"
                   onClick={handleMagicDraft}
                   disabled={aiLoading.draft || !formData.message}
                   className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${theme === 'dark'
-                      ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30'
-                      : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
+                    ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30'
+                    : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
                     } disabled:opacity-50`}
                   title="Escribe una idea rápida y la IA la redactará formalmente por ti"
                 >
                   {aiLoading.draft ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} />}
-                  {aiLoading.draft ? 'Redactando...' : 'Mejorar con IA'}
+                  {aiLoading.draft ? 'Redactando...' : 'Mejorar Texto con IA'}
                 </button>
               </div>
               <textarea
@@ -783,28 +797,24 @@ export default function Portfolio() {
                 onChange={handleFormChange}
                 required
                 className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none ${tc.inputBg}`}
-                placeholder="Escribe tus ideas (ej: necesito app para envíos) y presiona 'Mejorar con IA' para redactarlo profesionalmente..."
+                placeholder="Ej: Tengo un gimnasio y pierdo mucho tiempo controlando quién pagó y quién no..."
               />
             </div>
-
 
             <button
               type="submit"
               disabled={isSubmitting}
               className="w-full px-8 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-500/30 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Enviando...' : 'Daniel, ¡Contáctame!'}
+              {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
             </button>
           </form>
 
-          {/* Iconos Sociales (LinkedIn y GitHub) */}
           <div className="mt-10 flex justify-center gap-6">
-            {/* LinkedIn */}
             <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer"
               className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}>
               <Linkedin size={28} />
             </a>
-            {/* GitHub (Usando Code icon como placeholder de GitHub) */}
             <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer"
               className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}>
               <Code size={28} />
@@ -812,7 +822,7 @@ export default function Portfolio() {
           </div>
 
           <div className={`mt-16 pt-8 border-t ${theme === 'dark' ? 'border-slate-800 text-slate-600' : 'border-slate-200 text-slate-500'} text-sm`}>
-            <p>&copy; 2025 J Daniel Silvestre. San Luis Potosí, México.</p>
+            <p>&copy; 2025 J Daniel Silvestre. Consultoría Estratégica & Desarrollo.</p>
           </div>
         </div>
       </section>
