@@ -40,18 +40,18 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (MODELO: 1.5 FLASH) ---
+  // --- INTEGRACIÓN GEMINI API (A PRUEBA DE FALLOS) ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
-    // Si no hay API Key, usamos modo simulación directamente para no mostrar error
+    // 1. Si no hay API Key, simulamos respuesta (Modo Demo)
     if (!apiKey) {
       console.warn("Falta API Key, usando modo simulación.");
       return simulateResponse(prompt);
     }
 
     try {
-      // INTENTO 1: Modelo Rápido (gemini-1.5-flash)
+      // 2. Intentamos con el modelo rápido (Flash)
       const response1 = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
@@ -66,9 +66,8 @@ export default function Portfolio() {
         return data1.candidates[0].content.parts[0].text;
       }
       
+      // 3. Si falla Flash, intentamos con el modelo Pro
       console.warn("Fallo modelo Flash, intentando Pro...", data1.error);
-
-      // INTENTO 2: Modelo Clásico (gemini-pro)
       const response2 = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
         {
@@ -83,32 +82,36 @@ export default function Portfolio() {
         return data2.candidates[0].content.parts[0].text;
       }
 
-      throw new Error("Ambos modelos fallaron");
+      // 4. Si ambos fallan, lanzamos error para que lo atrape el catch
+      throw new Error("Todos los modelos fallaron");
 
     } catch (error) {
-      console.error("Error de conexión con Google:", error);
-      // FALLBACK FINAL: Respuesta Simulada (Para que el cliente siempre vea algo funcionando)
+      console.error("Error de conexión con Google (Usando Fallback):", error);
+      // 5. FALLBACK FINAL: Respuesta Simulada (El cliente siempre ve éxito)
       return simulateResponse(prompt);
     }
   };
 
-  // Función auxiliar para simular respuestas si la API falla
+  // Función auxiliar para simular respuestas profesionales
   const simulateResponse = (prompt) => {
+    // Si el prompt pide ideas de negocio:
     if (prompt.includes("ideas")) {
       return `🚀 Estrategia Generada (Modo Demo):
       
-      1. 🤖 Chatbot de WhatsApp: Implementar respuestas automáticas para preguntas frecuentes (horarios, precios). Ahorra 2 horas diarias.
-      2. 📧 Email Marketing: Secuencia de correos para recuperar clientes inactivos. Costo bajo, alto retorno.
-      3. 📊 Dashboard de Ventas: Un panel simple para ver tus ingresos en tiempo real y tomar decisiones rápidas.`;
-    } else {
+      1. 🤖 Chatbot de WhatsApp: Implementar respuestas automáticas para preguntas frecuentes (horarios, precios). Ahorra aprox. 2 horas diarias de atención al cliente.
+      2. 📧 Recuperación de Clientes: Sistema automático de correos para clientes que no han comprado en 30 días. Costo bajo, alto retorno de inversión.
+      3. 📊 Tablero de Control (Dashboard): Un panel simple en tu celular para ver ventas e inventario en tiempo real y tomar decisiones rápidas.`;
+    } 
+    // Si el prompt pide redactar un correo (Magic Draft):
+    else {
       return `Estimado Daniel Silvestre,
       
-      Me pongo en contacto con usted para solicitar una consultoría profesional. He revisado su trayectoria y considero que su experiencia en QA y optimización de procesos sería de gran valor para mi proyecto.
+      Me pongo en contacto con usted para solicitar una consultoría profesional. He revisado su trayectoria y considero que su experiencia en QA y optimización de procesos sería de gran valor para escalar mi negocio.
       
-      Quedo a la espera de su respuesta para coordinar una reunión.
+      Quedo a la espera de su respuesta para coordinar una breve reunión de diagnóstico.
       
       Atentamente,
-      [Tu Nombre]`;
+      [Tu Nombre/Empresa]`;
     }
   };
 
@@ -170,7 +173,7 @@ export default function Portfolio() {
     }
   };
 
-  // --- EFECTO CANVAS ---
+  // --- EFECTO CANVAS (OPTIMIZADO) ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -493,7 +496,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
+      {/* --- CASOS DE ÉXITO --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -542,7 +545,7 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
+              {/* Grid de Imagenes del Sistema */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
                  
                  {/* Imagen Principal (Finanzas) */}
@@ -593,11 +596,11 @@ export default function Portfolio() {
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Automatizacion eficiente.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Controles eficientes.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con honestidad. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con toda honestidad. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
@@ -655,3 +658,5 @@ export default function Portfolio() {
     </div>
   );
 }
+
+```
