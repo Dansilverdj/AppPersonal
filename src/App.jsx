@@ -39,7 +39,7 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (ROBUSTA) ---
+  // --- INTEGRACIÓN GEMINI API (MODELO ESTÁNDAR) ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
@@ -50,9 +50,10 @@ export default function Portfolio() {
     }
 
     try {
-      // Intentamos con el modelo más actual (Flash)
+      // CAMBIO AQUÍ: Usamos 'gemini-pro' en lugar de 'flash'. 
+      // Este es el modelo más compatible y evitará el error 404.
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -64,6 +65,7 @@ export default function Portfolio() {
       
       // Si Google devuelve error (ej. modelo no encontrado), lanzamos excepción
       if (data.error) {
+        console.error("Error detallado API:", data.error);
         throw new Error(data.error.message || "Error en API de Google");
       }
 
@@ -72,7 +74,6 @@ export default function Portfolio() {
     } catch (error) {
       console.error("Error conectando con la IA:", error);
       // Si falla la conexión real, usamos la respuesta simulada
-      // Esto asegura que el usuario SIEMPRE vea un resultado
       return simulateResponse(prompt);
     }
   };
@@ -559,7 +560,7 @@ export default function Portfolio() {
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por varios años. Entiendo el estrés de la nómina. Las ventas que no llegan.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina. Las ventas que no llegan.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
@@ -567,7 +568,7 @@ export default function Portfolio() {
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con honestidad. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Honesto. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
