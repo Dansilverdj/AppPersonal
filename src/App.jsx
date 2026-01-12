@@ -39,51 +39,61 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (MODELO ESTÁNDAR) ---
+  // --- INTEGRACIÓN GEMINI API (ESTRATEGIA MULTI-MODELO) ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
-    // Si no hay API Key, usamos simulación para no romper la app
+    // Si no hay API Key, simulamos directamente
     if (!apiKey) {
-      console.warn("Falta API Key, usando modo simulación.");
+      console.warn("Falta API Key, activando modo simulación.");
       return simulateResponse(prompt);
     }
 
-    try {
-      // CAMBIO AQUÍ: Usamos 'gemini-pro' en lugar de 'flash'. 
-      // Este es el modelo más compatible y evitará el error 404.
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    // LISTA DE MODELOS A PROBAR (Si uno falla, prueba el siguiente)
+    const modelsToTry = [
+      "gemini-1.5-flash", 
+      "gemini-1.5-pro", 
+      "gemini-1.0-pro", 
+      "gemini-pro"
+    ];
+
+    for (const model of modelsToTry) {
+      try {
+        console.log(`Intentando conectar con modelo: ${model}...`);
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          }
+        );
+        
+        const data = await response.json();
+
+        // Si este modelo funciona y trae respuesta, la devolvemos y salimos del bucle
+        if (!data.error && data.candidates && data.candidates.length > 0) {
+          return data.candidates[0].content.parts[0].text;
         }
-      );
-      
-      const data = await response.json();
-      
-      // Si Google devuelve error (ej. modelo no encontrado), lanzamos excepción
-      if (data.error) {
-        console.error("Error detallado API:", data.error);
-        throw new Error(data.error.message || "Error en API de Google");
+
+        console.warn(`El modelo ${model} falló o no está disponible. Probando siguiente...`);
+        
+      } catch (error) {
+        console.warn(`Error de red con ${model}. Probando siguiente...`);
       }
-
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se generó respuesta.";
-
-    } catch (error) {
-      console.error("Error conectando con la IA:", error);
-      // Si falla la conexión real, usamos la respuesta simulada
-      return simulateResponse(prompt);
     }
+
+    // SI LLEGAMOS AQUÍ, TODOS FALLARON. USAMOS RESPALDO SIMULADO.
+    console.error("Todos los modelos fallaron. Usando respuesta simulada.");
+    return simulateResponse(prompt);
   };
 
-  // Función de respaldo (Simulación)
+  // Función de respaldo (Simulación Profesional)
   const simulateResponse = (prompt) => {
     if (prompt.includes("ideas")) {
-      return `🚀 Ideas Generadas (Modo Demo):\n\n1. 🤖 Chatbot de Atención 24/7: Automatiza respuestas frecuentes en WhatsApp para no perder clientes.\n2. 📧 Reactivación de Base de Datos: Email marketing automático para clientes antiguos.\n3. 📊 Dashboard de Ventas: Visualiza tus ingresos diarios en tiempo real desde el celular.`;
+      return `🚀 Estrategia Generada (Modo Respaldo):\n\n1. 🤖 Chatbot de WhatsApp: Implementar respuestas automáticas para preguntas frecuentes (horarios, precios). Ahorra aprox. 2 horas diarias de atención al cliente.\n2. 📧 Recuperación de Clientes: Sistema automático de correos para clientes que no han comprado en 30 días. Costo bajo, alto retorno de inversión.\n3. 📊 Tablero de Control (Dashboard): Un panel simple en tu celular para ver ventas e inventario en tiempo real y tomar decisiones rápidas.`;
     } else {
-      return `Estimado Daniel,\n\nMe interesa profesionalizar mi negocio. He visto tu perfil y creo que tu experiencia en procesos y tecnología es lo que necesitamos.\n\n¿Podríamos agendar una llamada?\n\nSaludos.`;
+      return `Estimado Daniel Silvestre,\n\nMe pongo en contacto con usted para solicitar una consultoría profesional. He revisado su trayectoria y considero que su experiencia en QA y optimización de procesos sería de gran valor para escalar mi negocio.\n\nQuedo a la espera de su respuesta para coordinar una breve reunión de diagnóstico.\n\nAtentamente,\n[Tu Nombre/Empresa]`;
     }
   };
 
@@ -464,7 +474,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
+      {/* --- CASOS DE ÉXITO --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -513,22 +523,17 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
+              {/* Grid de Imagenes del Sistema */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
-                 
-                 {/* Imagen Principal (Finanzas) */}
                  <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
                     <img src={financeImg} alt="Finanzas Dashboard" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                  </div>
-
                  <div className="grid grid-cols-2 gap-4">
-                    {/* Imagen Secundaria 1 (POS/Tienda) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
                        <img src={posImg} alt="Tienda POS" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
-                    {/* Imagen Secundaria 2 (Acceso) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
                        <img src={accessImg} alt="Control Acceso" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
@@ -560,7 +565,7 @@ export default function Portfolio() {
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina. Las ventas que no llegan.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por varios años. Entiendo el estrés de la nómina. Las ventas que no llegan.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
@@ -568,7 +573,7 @@ export default function Portfolio() {
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Honesto. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Honestidad ante todo. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
