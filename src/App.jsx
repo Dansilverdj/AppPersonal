@@ -3,7 +3,8 @@ import {
   Menu, X, Linkedin, Mail, Smartphone,
   Terminal, Bot, Layout, CheckCircle2,
   GraduationCap, Sun, Moon, Code, Sparkles, Loader2, Lightbulb,
-  ArrowRight, TrendingUp, Users, ShieldCheck, Quote
+  ArrowRight, TrendingUp, Users, ShieldCheck, Quote,
+  Database, Server, Cpu, BarChart3, Lock
 } from 'lucide-react';
 
 export default function Portfolio() {
@@ -17,7 +18,7 @@ export default function Portfolio() {
   const [generatedIdeas, setGeneratedIdeas] = useState(null);
 
   const canvasRef = useRef(null);
-  // OPTIMIZACIÓN: Usamos useRef para la posición del mouse (evita re-renders masivos)
+  // OPTIMIZACIÓN: Usamos useRef para la posición del mouse
   const mousePosRef = useRef({ x: 0, y: 0 });
 
   // --- Estado y Manejadores del Formulario de Contacto ---
@@ -37,56 +38,48 @@ export default function Portfolio() {
   // --- INTEGRACIÓN GEMINI API ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
-
-    if (!apiKey) {
-      console.warn("Falta la API Key de Gemini.");
-    }
+    if (!apiKey) console.warn("Falta la API Key de Gemini.");
 
     try {
-      // Usamos el modelo flash por ser rápido y estable
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          })
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
         }
       );
       const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se pudo generar una respuesta. Verifica tu API Key.";
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error al generar respuesta.";
     } catch (error) {
       console.error("Error calling Gemini:", error);
-      return "Hubo un error conectando con la IA. Por favor intenta de nuevo.";
+      return "Hubo un error conectando con la IA.";
     }
   };
 
-  // Función 1: Generador de Ideas de Automatización
+  // Función 1: Generador de Ideas
   const handleGenerateIdeas = async () => {
     if (!businessInput.trim()) return;
     setAiLoading(prev => ({ ...prev, ideas: true }));
     setGeneratedIdeas(null);
 
-    const prompt = `Actúa como J Daniel Silvestre, consultor experto en QA y Administración. 
-    El usuario tiene este tipo de negocio: "${businessInput}".
-    Genera 3 ideas breves, innovadoras y rentables de automatización o tecnología para este negocio.
-    Formato: Lista con viñetas cortas. Usa emojis. Tono: Profesional, enfocado en ahorro de dinero o tiempo.`;
+    const prompt = `Actúa como J Daniel Silvestre, consultor experto. 
+    El usuario tiene este negocio: "${businessInput}".
+    Genera 3 ideas breves y rentables de automatización para este negocio.
+    Formato: Lista con emojis. Tono: Profesional y directo al beneficio económico.`;
 
     const result = await callGemini(prompt);
     setGeneratedIdeas(result);
     setAiLoading(prev => ({ ...prev, ideas: false }));
   };
 
-  // Función 2: Magic Draft para Contacto
+  // Función 2: Magic Draft
   const handleMagicDraft = async () => {
     if (!formData.message.trim()) return;
     setAiLoading(prev => ({ ...prev, draft: true }));
 
-    const prompt = `Actúa como un asistente de redacción profesional.
-    Toma este borrador informal de un cliente potencial: "${formData.message}"
-    Reescríbelo para que sea un mensaje de contacto formal, claro y persuasivo dirigido a Daniel Silvestre (Consultor Tecnológico).
-    Mantén la intención original pero mejora la gramática y el tono. Solo devuelve el texto del mensaje.`;
+    const prompt = `Reescribe este mensaje informal de un cliente: "${formData.message}"
+    para que sea una solicitud de consultoría formal dirigida a Daniel Silvestre.`;
 
     const result = await callGemini(prompt);
     setFormData(prev => ({ ...prev, message: result }));
@@ -94,43 +87,35 @@ export default function Portfolio() {
   };
 
   const handleFormChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitMessage('');
-
     const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/xldyyknb";
 
     try {
       const response = await fetch(formspreeEndpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-
       if (response.ok) {
-        setSubmitMessage('¡Mensaje enviado con éxito! Analizaré tu caso y te responderé pronto.');
+        setSubmitMessage('¡Mensaje enviado con éxito! Analizaré tu caso pronto.');
         setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
-        setSubmitMessage('Hubo un problema al enviar el mensaje. Por favor intenta contactarme por LinkedIn.');
+        setSubmitMessage('Error al enviar. Intenta por LinkedIn.');
       }
     } catch (error) {
-      setSubmitMessage('Error de conexión. Por favor verifica tu internet.');
+      setSubmitMessage('Error de conexión.');
     } finally {
       setIsSubmitting(false);
     }
   };
-  // --------------------------------------------------
 
-  // --- EFECTO DE FONDO INTERACTIVO (OPTIMIZADO CON USE REF) ---
+  // --- EFECTO CANVAS (OPTIMIZADO) ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -155,14 +140,12 @@ export default function Portfolio() {
         this.vy = (Math.random() - 0.5) * 0.5;
         this.size = Math.random() * 2 + 1;
       }
-
       update() {
         this.x += this.vx;
         this.y += this.vy;
         if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
         if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
       }
-
       draw() {
         ctx.fillStyle = particleColor;
         ctx.beginPath();
@@ -181,42 +164,31 @@ export default function Portfolio() {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
-      });
-
+      particles.forEach(p => { p.update(); p.draw(); });
       connectParticles();
       animationFrameId = requestAnimationFrame(animate);
     };
 
     const connectParticles = () => {
-      // Leemos la posición del Ref (NO provoca re-render)
       const mouseX = mousePosRef.current.x;
       const mouseY = mousePosRef.current.y;
-
       for (let i = 0; i < particles.length; i++) {
         for (let j = i; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 120) {
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = lineColor.replace('0.15', `${0.15 - distance / 120 * 0.15}`);
+            ctx.strokeStyle = lineColor.replace('0.15', `${0.15 - dist / 120 * 0.15}`);
             ctx.lineWidth = 1;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
           }
         }
-
-        // Conectar con el mouse
         const dxMouse = particles[i].x - mouseX;
         const dyMouse = particles[i].y - mouseY;
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-
         if (distMouse < 200) {
           ctx.beginPath();
           ctx.strokeStyle = mouseLineColor.replace('0.2', `${0.2 - distMouse / 200 * 0.2}`);
@@ -228,57 +200,25 @@ export default function Portfolio() {
       }
     };
 
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      init();
-    });
-
-    resizeCanvas();
-    init();
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [theme]); // NOTA: 'mousePos' eliminado de dependencias
+    window.addEventListener('resize', () => { resizeCanvas(); init(); });
+    resizeCanvas(); init(); animate();
+    return () => { window.removeEventListener('resize', resizeCanvas); cancelAnimationFrame(animationFrameId); };
+  }, [theme]);
 
   const handleMouseMove = (e) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect) {
-      // Actualizamos Ref (sin re-render)
-      mousePosRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
+      mousePosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     }
   };
 
   const scrollToSection = (id) => {
     setIsMenuOpen(false);
     const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Detectar sección activa
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'services', 'cases', 'about', 'contact'];
-      const scrollPosition = window.scrollY + 200;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element && element.offsetTop <= scrollPosition && (element.offsetTop + element.offsetHeight) > scrollPosition) {
-          setActiveSection(section);
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+  // Theme classes
   const themeClasses = {
     dark: {
       bg: 'bg-slate-950 text-slate-200 selection:bg-indigo-500',
@@ -303,15 +243,10 @@ export default function Portfolio() {
       inputBg: 'bg-white border-slate-300 text-slate-800 placeholder-slate-400',
     }
   };
-
   const tc = themeClasses[theme];
 
   return (
-    <div
-      className={`min-h-screen font-sans relative ${tc.bg}`}
-      onMouseMove={handleMouseMove}
-    >
-      {/* Estilos Animación Verde */}
+    <div className={`min-h-screen font-sans relative ${tc.bg}`} onMouseMove={handleMouseMove}>
       <style>{`
         @keyframes greenPulse {
           0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); border-color: rgba(74, 222, 128, 0.2); }
@@ -321,60 +256,39 @@ export default function Portfolio() {
         .animate-green-pulse { animation: greenPulse 3s infinite ease-in-out; }
       `}</style>
 
-      {/* CANVAS FONDO */}
-      <canvas
-        ref={canvasRef}
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-60"
-      />
+      <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-60" />
 
-      {/* --- NAVIGATION --- */}
+      {/* --- NAV --- */}
       <nav className={`fixed top-0 w-full z-50 backdrop-blur-md border-b ${tc.navBg}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 cursor-pointer" onClick={() => scrollToSection('home')}>
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
-                DS.
-              </span>
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">DS.</span>
             </div>
-
-            <div className="flex items-center">
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-8">
-                  {['Inicio', 'Servicios', 'Casos de Éxito', 'Filosofía', 'Contacto'].map((item, index) => {
-                    const id = ['home', 'services', 'cases', 'about', 'contact'][index];
-                    return (
-                      <button
-                        key={item}
-                        onClick={() => scrollToSection(id)}
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:text-indigo-500 ${activeSection === id ? 'text-indigo-500 scale-105' : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')
-                          }`}
-                      >
-                        {item}
-                      </button>
-                    );
-                  })}
-                </div>
+            <div className="hidden md:block">
+              <div className="ml-10 flex items-baseline space-x-8">
+                {['Inicio', 'Servicios', 'Casos de Éxito', 'Filosofía', 'Contacto'].map((item, index) => {
+                  const id = ['home', 'services', 'cases', 'about', 'contact'][index];
+                  return (
+                    <button key={item} onClick={() => scrollToSection(id)} className={`px-3 py-2 rounded-md text-sm font-medium transition-all hover:text-indigo-500 ${activeSection === id ? 'text-indigo-500 scale-105' : (theme === 'dark' ? 'text-slate-400' : 'text-slate-600')}`}>
+                      {item}
+                    </button>
+                  );
+                })}
               </div>
-
-              <button
-                onClick={toggleTheme}
-                className={`ml-4 p-2 rounded-full transition-colors ${theme === 'dark' ? 'text-yellow-400 hover:bg-slate-800' : 'text-indigo-600 hover:bg-slate-100'}`}
-              >
+            </div>
+            <div className="flex items-center gap-4">
+              <button onClick={toggleTheme} className={`p-2 rounded-full transition-colors ${theme === 'dark' ? 'text-yellow-400 hover:bg-slate-800' : 'text-indigo-600 hover:bg-slate-100'}`}>
                 {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
               </button>
-
-              <div className="md:hidden ml-2">
-                <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className={`p-2 rounded-md ${theme === 'dark' ? 'text-slate-400 hover:text-white' : 'text-slate-600'}`}
-                >
+              <div className="md:hidden">
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`p-2 rounded-md ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
               </div>
             </div>
           </div>
         </div>
-
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className={`md:hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} border-b`}>
@@ -382,11 +296,7 @@ export default function Portfolio() {
               {['Inicio', 'Servicios', 'Casos de Éxito', 'Filosofía', 'Contacto'].map((item, index) => {
                 const id = ['home', 'services', 'cases', 'about', 'contact'][index];
                 return (
-                  <button
-                    key={item}
-                    onClick={() => scrollToSection(id)}
-                    className={`block w-full text-left px-3 py-3 rounded-md text-base font-medium ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'}`}
-                  >
+                  <button key={item} onClick={() => scrollToSection(id)} className={`block w-full text-left px-3 py-3 rounded-md text-base font-medium ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-200'}`}>
                     {item}
                   </button>
                 );
@@ -396,15 +306,14 @@ export default function Portfolio() {
         )}
       </nav>
 
-      {/* --- HERO SECTION (VENTAS) --- */}
+      {/* --- HERO --- */}
       <section id="home" className="relative z-10 pt-32 pb-20 md:pt-40 md:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col-reverse md:flex-row items-center gap-12">
           <div className="flex-1 text-center md:text-left">
             <div className={`inline-flex items-center px-3 py-1 rounded-full border border-green-500/30 ${theme === 'dark' ? 'bg-green-500/10 text-green-400' : 'bg-green-500/20 text-green-700'} text-sm font-medium mb-6 backdrop-blur-sm animate-green-pulse`}>
               <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
-              Consultoría Abierta para PYMES
+              Consultoría Abierta 2026
             </div>
-
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg leading-tight">
               Transformo Negocios con <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
@@ -412,68 +321,37 @@ export default function Portfolio() {
               </span>
             </h1>
             <p className={`text-xl md:text-2xl ${tc.text} mb-8 max-w-2xl mx-auto md:mx-0 font-light`}>
-              No solo desarrollo software. <span className={`${tc.textHighlight} font-semibold`}>Diseño rentabilidad.</span><br />
-              Optimiza operaciones, reduce errores y escala tu empresa con estrategias tecnológicas a medida.
+              No solo desarrollo aplicaciones. <span className={`${tc.textHighlight} font-semibold`}>Diseño rentabilidad.</span><br />
+              Optimiza operaciones y reduce fugas de dinero con estrategias tecnológicas a medida.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/50 z-20 flex items-center justify-center gap-2"
-              >
+              <button onClick={() => scrollToSection('contact')} className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/50 z-20 flex items-center justify-center gap-2">
                 Solicitar Diagnóstico <ArrowRight size={20} />
               </button>
-              <button
-                onClick={() => scrollToSection('cases')}
-                className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 text-slate-300' : 'border-slate-300 bg-white/50 text-slate-700'} font-medium transition-all backdrop-blur-sm z-20`}
-              >
+              <button onClick={() => scrollToSection('cases')} className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 text-slate-300' : 'border-slate-300 bg-white/50 text-slate-700'} font-medium transition-all backdrop-blur-sm z-20`}>
                 Ver Resultados
               </button>
             </div>
           </div>
-
-          {/* GENERADOR DE ESTRATEGIAS (HOOK DE VENTA) */}
           <div className="flex-1 z-10 w-full">
             <div className={`p-8 rounded-2xl border bg-gradient-to-br ${theme === 'dark' ? 'from-slate-900 via-indigo-950/30 to-slate-900' : 'from-white via-indigo-50 to-white'} relative overflow-hidden shadow-2xl animate-green-pulse`}>
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Bot size={100} />
-              </div>
-
+              <div className="absolute top-0 right-0 p-4 opacity-10"><Bot size={100} /></div>
               <div className="relative z-10 text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-4 border border-green-500/30">
                   <Sparkles size={12} className="animate-pulse" /> DEMO GRATUITA: CONSULTOR IA
                 </div>
-                <h3 className={`text-2xl font-bold ${tc.textHighlight} mb-3`}>
-                  ¿Cómo puedes ahorrar dinero hoy?
-                </h3>
-                <p className={`text-sm mb-6 ${tc.text}`}>
-                  Escribe tu giro de negocio (ej: Restaurante, Taller, Clínica) y obtén <strong>3 ideas inmediatas de automatización</strong>.
-                </p>
-
+                <h3 className={`text-2xl font-bold ${tc.textHighlight} mb-3`}>¿Cómo puedes ahorrar dinero hoy?</h3>
+                <p className={`text-sm mb-6 ${tc.text}`}>Escribe tu giro de negocio y obtén <strong>3 ideas inmediatas de automatización</strong>.</p>
                 <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-6">
-                  <input
-                    type="text"
-                    value={businessInput}
-                    onChange={(e) => setBusinessInput(e.target.value)}
-                    placeholder="Ej: Gimnasio, Ferretería..."
-                    className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${tc.inputBg}`}
-                  />
-                  <button
-                    onClick={handleGenerateIdeas}
-                    disabled={aiLoading.ideas || !businessInput}
-                    className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg flex items-center justify-center gap-2"
-                  >
+                  <input type="text" value={businessInput} onChange={(e) => setBusinessInput(e.target.value)} placeholder="Ej: Gimnasio, Ferretería..." className={`flex-1 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${tc.inputBg}`} />
+                  <button onClick={handleGenerateIdeas} disabled={aiLoading.ideas || !businessInput} className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg flex items-center justify-center gap-2">
                     {aiLoading.ideas ? <Loader2 className="animate-spin" size={20} /> : <><Lightbulb size={20} /> Generar</>}
                   </button>
                 </div>
-
                 {generatedIdeas && (
                   <div className={`text-left p-6 rounded-xl border animate-in fade-in slide-in-from-bottom-4 duration-500 ${theme === 'dark' ? 'bg-slate-950/80 border-indigo-500/50' : 'bg-white/80 border-indigo-200'} max-h-60 overflow-y-auto`}>
-                    <h4 className="text-indigo-400 font-bold mb-2 flex items-center gap-2 sticky top-0 bg-opacity-90 backdrop-blur-sm py-2">
-                      <Bot size={18} /> Oportunidades Detectadas:
-                    </h4>
-                    <div className={`whitespace-pre-line text-sm leading-relaxed ${tc.text}`}>
-                      {generatedIdeas}
-                    </div>
+                    <h4 className="text-indigo-400 font-bold mb-2 flex items-center gap-2 sticky top-0 bg-opacity-90 backdrop-blur-sm py-2"><Bot size={18} /> Oportunidades:</h4>
+                    <div className={`whitespace-pre-line text-sm leading-relaxed ${tc.text}`}>{generatedIdeas}</div>
                   </div>
                 )}
               </div>
@@ -482,228 +360,194 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- SERVICES SECTION --- */}
-      <section id="services" className="relative z-10 py-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-4`}>
-              Soluciones Integrales
-            </h2>
-            <p className={`max-w-2xl mx-auto ${tc.text}`}>
-              Combino la administración tradicional con tecnología de punta para crear sistemas que funcionan solos.
-            </p>
+      {/* --- TECH STACK (NUEVO) --- */}
+      <section className={`py-10 border-y ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} relative z-10`}>
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas que Domino</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-80">
+            {/* React */}
+            <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform"><Code size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>React / Web</span>
+            </div>
+             {/* Python */}
+             <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-400 group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>Python</span>
+            </div>
+             {/* SQL */}
+             <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-slate-500/10 text-slate-400 group-hover:scale-110 transition-transform"><Database size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>SQL / Datos</span>
+            </div>
+             {/* Automatización/Selenium */}
+             <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform"><Bot size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>Selenium / IA</span>
+            </div>
+             {/* Análisis/SPSS */}
+             <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-green-500/10 text-green-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>SPSS / Analytics</span>
+            </div>
+             {/* Postman/API */}
+             <div className="flex flex-col items-center gap-2 group">
+              <div className="p-3 rounded-lg bg-orange-500/10 text-orange-400 group-hover:scale-110 transition-transform"><Server size={32} /></div>
+              <span className={`text-xs font-medium ${tc.text}`}>Postman / API</span>
+            </div>
           </div>
+        </div>
+      </section>
 
+      {/* --- SERVICES --- */}
+      <section id="services" className="relative z-10 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-4`}>Soluciones Integrales</h2>
+            <p className={`max-w-2xl mx-auto ${tc.text}`}>Combino la administración tradicional con tecnología de punta para crear sistemas que funcionan solos.</p>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Servicio 1 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
-              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
-                <TrendingUp className="w-8 h-8 text-purple-400" />
-              </div>
+              <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6"><TrendingUp className="w-8 h-8 text-purple-400" /></div>
               <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Consultoría de Procesos & IA</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                Analizo tus flujos de trabajo actuales para eliminar cuellos de botella. Implemento Chatbots y Agentes IA que trabajan 24/7.
-              </p>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Analizo tus flujos de trabajo para eliminar cuellos de botella. Implemento Chatbots y Agentes IA que trabajan 24/7.</p>
               <ul className="text-sm text-slate-500 space-y-2">
                 <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Reducción de Costos Operativos</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Atención al Cliente Automatizada</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Automatización de Tareas</li>
               </ul>
             </div>
-
-            {/* Servicio 2 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 relative shadow-lg`}>
               <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Especialidad</div>
-              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                <ShieldCheck className="w-8 h-8 text-blue-400" />
-              </div>
+              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6"><ShieldCheck className="w-8 h-8 text-blue-400" /></div>
               <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Calidad de Software (QA)</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                ¿Ya tienes software pero falla? Audito y mejoro la calidad de tus sistemas para asegurar que no pierdas ventas por errores técnicos.
-              </p>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Audito y mejoro la calidad de tus sistemas. Me aseguro de que tu software no falle cuando más lo necesitas.</p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Pruebas Automatizadas</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Pruebas Automatizadas (Selenium)</li>
                 <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Estabilidad Garantizada</li>
               </ul>
             </div>
-
-            {/* Servicio 3 */}
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
-              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6">
-                <Layout className="w-8 h-8 text-emerald-400" />
-              </div>
-              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Desarrollo Web Estratégico</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>
-                No solo "hago páginas web". Construyo herramientas de venta y plataformas de gestión interna (Dashboards) para dueños de negocio.
-              </p>
+              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6"><Layout className="w-8 h-8 text-emerald-400" /></div>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Aplicaciones de Gestión</h3>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Desarrollo aplicaciones de escritorio y paneles de control (Dashboards) para dueños de negocio que necesitan control total.</p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Paneles de Control (Dashboards)</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Integración con Pasarelas de Pago</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Paneles Financieros</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Control de Inventarios & Accesos</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- SUCCESS STORIES / CASE STUDIES SECTION --- */}
+      {/* --- CASOS DE ÉXITO (UPDATE CON IMAGENES) --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
             <div>
               <h2 className={`text-3xl font-bold ${tc.textHighlight} mb-4 flex items-center gap-3`}>
-                <TrendingUp className="text-green-500" /> Casos de Éxito
+                <TrendingUp className="text-green-500" /> Caso de Éxito
               </h2>
-              <p className={`max-w-2xl ${tc.text}`}>
-                Resultados reales en empresas reales. Así es como transformamos problemas en ventajas competitivas.
-              </p>
-            </div>
-            <div className="hidden md:block">
-              <span className={`text-sm ${tc.textMuted}`}>Desliza para ver más &rarr;</span>
+              <p className={`max-w-2xl ${tc.text}`}>Resultados reales. Así es como transformamos problemas operativos en ventajas competitivas.</p>
             </div>
           </div>
 
-          {/* CONTENEDOR DEL CASO DE ESTUDIO (Diseño destacado para 1 solo caso por ahora) */}
           <div className={`rounded-3xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
             <div className="grid lg:grid-cols-2">
-              
-              {/* Lado Izquierdo: Información */}
+              {/* Info */}
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <div className="flex items-center gap-2 mb-6">
-                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
-                    GIMNASIOS & FITNESS
-                  </span>
-                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">
-                    AUTOMATIZACIÓN
-                  </span>
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20">FITNESS & GYM</span>
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">SOFTWARE A MEDIDA</span>
                 </div>
-
-                <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>
-                  Modernización Integral: <br/> "F1rstGym"
-                </h3>
-
+                <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Modernización Integral: <br/> "F1rstGym"</h3>
                 <div className="space-y-6 mb-8">
                   <div>
                     <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>El Reto</h4>
-                    <p className={`${tc.text} leading-relaxed`}>
-                      Gestión manual basada en papel y Excel. Fugas de dinero por accesos no controlados y alta carga administrativa para el dueño, impidiendo el crecimiento de sucursales.
-                    </p>
+                    <p className={`${tc.text} leading-relaxed`}>Gestión manual, fugas de dinero por accesos no autorizados y falta de claridad financiera.</p>
                   </div>
-
                   <div>
-                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>La Solución</h4>
+                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>La Solución: "GymControl"</h4>
                     <p className={`${tc.text} leading-relaxed`}>
-                      Desarrollo de <strong>"GymControl"</strong>: Una plataforma web personalizada conectada a lectores biométricos. Automatización de check-ins, recordatorios de pago por WhatsApp y panel financiero en tiempo real.
+                      Desarrollo de una <strong>Aplicación de Gestión Integral</strong>. Incluye control biométrico de acceso, punto de venta (POS) para tienda y dashboard financiero.
                     </p>
                   </div>
                 </div>
-
                 <div className="grid grid-cols-3 gap-4 border-t border-b py-6 mb-8 border-slate-700/50">
-                  <div>
+                  <div className="text-center md:text-left">
                     <div className="text-2xl font-bold text-green-500">100%</div>
-                    <div className="text-xs text-slate-500">Control de Accesos</div>
+                    <div className="text-xs text-slate-500">Control Accesos</div>
                   </div>
-                  <div>
+                  <div className="text-center md:text-left">
                     <div className="text-2xl font-bold text-blue-500">-15h</div>
                     <div className="text-xs text-slate-500">Admin Semanal</div>
                   </div>
-                  <div>
-                    <div className="text-2xl font-bold text-purple-500">0%</div>
-                    <div className="text-xs text-slate-500">Cartera Vencida</div>
+                  <div className="text-center md:text-left">
+                    <div className="text-2xl font-bold text-purple-500">ROI</div>
+                    <div className="text-xs text-slate-500">Recuperado en 1 mes</div>
                   </div>
                 </div>
-
-                {/* Testimonio pequeño (Opcional) */}
-                <div className={`italic text-sm ${tc.textMuted} flex gap-3`}>
-                  <Quote size={20} className="text-slate-600 flex-shrink-0" />
-                  "El sistema se pagó solo en el primer mes al recuperar cuotas perdidas. Ahora tengo control total desde mi celular."
-                </div>
               </div>
 
-              {/* Lado Derecho: Visuales */}
-              <div className={`relative h-64 lg:h-auto overflow-hidden ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'} flex items-center justify-center group`}>
-                {/* PLACEHOLDER DE IMAGEN:
-                   Cuando tengas la captura real, cambia la etiqueta <img> de abajo.
-                   Por ahora, uso un div con icono o una imagen de placeholder.
-                */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent z-10 flex flex-col justify-end p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <p className="text-white font-medium">Dashboard Administrativo & Control de Acceso</p>
-                </div>
-                
-                {/* Reemplaza src con tu imagen real: src="/assets/gym-project.jpg" */}
-                {/* Si no hay imagen, este div sirve de placeholder visual */}
-                <div className="text-center p-10 opacity-50">
-                   <Layout size={64} className="mx-auto mb-4 text-slate-400"/>
-                   <p className="text-slate-500 font-mono text-sm">Captura del Sistema (Próximamente)</p>
-                   {/* <img src="/tu-imagen-aqui.jpg" className="absolute inset-0 w-full h-full object-cover" alt="Proyecto Gym" /> */}
-                </div>
-              </div>
+              {/* Grid de Imagenes del Sistema */}
+              <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
+                 {/* IMPORTANTE: 
+                    Asegúrate de guardar tus capturas en la carpeta 'public/assets/' 
+                    con los nombres: finance.png, pos.png, access.png
+                 */}
+                 
+                 {/* Imagen Principal (Finanzas) */}
+                 <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group">
+                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
+                    <img src="/assets/finance.png" alt="Finanzas Dashboard" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                 </div>
 
+                 <div className="grid grid-cols-2 gap-4">
+                    {/* Imagen Secundaria 1 (POS/Tienda) */}
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group">
+                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
+                       <img src="/assets/pos.png" alt="Tienda POS" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    {/* Imagen Secundaria 2 (Acceso) */}
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group">
+                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
+                       <img src="/assets/access.png" alt="Control Acceso" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                 </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="mt-8 text-center">
-            <p className={`text-sm ${tc.textMuted}`}>¿Quieres ver más detalles técnicos o una demo?</p>
-            <button onClick={() => scrollToSection('contact')} className="mt-2 text-indigo-500 hover:text-indigo-400 font-semibold text-sm underline underline-offset-4">
-              Agenda una demostración
-            </button>
           </div>
         </div>
       </section>
 
-      {/* --- PHILOSOPHY / ABOUT SECTION --- */}
+      {/* --- PHILOSOPHY --- */}
       <section id="about" className={`relative z-10 py-20 backdrop-blur-sm ${tc.sectionBg2}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className={`text-3xl font-bold ${tc.textHighlight} mb-6 flex items-center gap-3`}>
-                <Terminal className="text-blue-500" />
-                Mi Filosofía de Trabajo
+                <Terminal className="text-blue-500" /> Mi Filosofía
               </h2>
               <div className={`space-y-4 leading-relaxed ${tc.text}`}>
-                <p>
-                  Muchos consultores te entregan un documento PDF y se van. Muchos programadores te entregan código y no entienden tu negocio.
-                </p>
-                <p>
-                  Yo soy el punto medio. Como <strong className="text-indigo-500">Administrador de Empresas</strong>, entiendo de flujos de caja y ROI. Como <strong className="text-blue-500">QA Engineer</strong>, entiendo de sistemas robustos.
-                </p>
-                <p>
-                  No busco venderte la tecnología de moda. Busco implementar la herramienta exacta que hará que tu negocio sea más fácil de dirigir y más rentable.
-                </p>
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                {/* Tech Stack simplificado para clientes */}
-                {['Automatización', 'Dashboards', 'Bases de Datos', 'Inteligencia Artificial', 'Web Apps'].map((skill) => (
-                   <span key={skill} className={`px-3 py-1 rounded-full text-xs font-medium border ${theme === 'dark' ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-300 text-slate-700'}`}>
-                     {skill}
-                   </span>
-                ))}
+                <p>Muchos consultores entregan un PDF y se van. Muchos programadores entregan código y no entienden tu negocio.</p>
+                <p>Yo soy el punto medio. Como <strong className="text-indigo-500">Administrador</strong>, entiendo de flujos de caja y ROI. Como <strong className="text-blue-500">QA Engineer</strong>, entiendo de sistemas robustos.</p>
+                <p>No busco venderte la tecnología de moda. Busco implementar la herramienta exacta que hará que tu negocio sea más fácil de dirigir y más rentable.</p>
               </div>
             </div>
-
             <div>
               <div className={`p-8 rounded-xl border ${theme === 'dark' ? 'bg-slate-900/50 border-slate-800' : 'bg-white/50 border-slate-200'}`}>
                 <h3 className={`text-xl font-bold ${tc.textHighlight} mb-4`}>¿Por qué elegirme?</h3>
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div>
-                      <strong className={`${tc.textHighlight}`}>Visión de Dueño</strong>
-                      <p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio (Lotería) por 6 años. Entiendo el estrés de la nómina y la operación.</p>
-                    </div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div>
-                      <strong className={`${tc.textHighlight}`}>Calidad Técnica</strong>
-                      <p className={`text-sm ${tc.textMuted}`}>Experiencia corporativa probando software crítico. Nada de sistemas que se caen.</p>
-                    </div>
+                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div>
-                      <strong className={`${tc.textHighlight}`}>Trato Directo</strong>
-                      <p className={`text-sm ${tc.textMuted}`}>Sin intermediarios ni tecnicismos confusos. Hablamos de negocios.</p>
-                    </div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
@@ -712,117 +556,49 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CONTACT SECTION (FORM) --- */}
+      {/* --- CONTACT --- */}
       <section id="contact" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-6`}>Hablemos de tu Proyecto</h2>
-          <p className={`mb-10 max-w-xl mx-auto ${tc.text}`}>
-            La primera consulta de diagnóstico es gratuita. Cuéntame qué te duele hoy en tu negocio y veamos cómo solucionarlo.
-          </p>
-
+          <p className={`mb-10 max-w-xl mx-auto ${tc.text}`}>La primera consulta de diagnóstico es gratuita. Cuéntame qué te duele hoy en tu negocio.</p>
           <form onSubmit={handleSubmit} className={`p-8 rounded-xl border max-w-lg mx-auto text-left shadow-2xl ${theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200'}`}>
-
-            {/* Mensaje de estado */}
             {submitMessage && (
-              <div className={`p-4 mb-4 text-sm rounded-lg ${submitMessage.includes('éxito') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'} ${submitMessage.includes('ATENCIÓN') ? 'bg-yellow-600/20 text-yellow-400' : ''}`}>
+              <div className={`p-4 mb-4 text-sm rounded-lg ${submitMessage.includes('éxito') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
                 {submitMessage}
               </div>
             )}
-
             <div className="mb-4">
-              <label htmlFor="name" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Nombre / Empresa</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="Tu nombre"
-              />
+              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Nombre / Empresa</label>
+              <input type="text" name="name" value={formData.name} onChange={handleFormChange} required className={`w-full p-3 rounded-lg focus:ring-blue-500 ${tc.inputBg}`} placeholder="Tu nombre" />
             </div>
-
             <div className="mb-4">
-              <label htmlFor="email" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Correo Electrónico</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="contacto@empresa.com"
-              />
+              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>Correo</label>
+              <input type="email" name="email" value={formData.email} onChange={handleFormChange} required className={`w-full p-3 rounded-lg focus:ring-blue-500 ${tc.inputBg}`} placeholder="contacto@empresa.com" />
             </div>
-
             <div className="mb-6">
-              <label htmlFor="phone" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>WhatsApp (Opcional)</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 ${tc.inputBg}`}
-                placeholder="Para respuesta rápida"
-              />
+              <label className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>WhatsApp</label>
+              <input type="tel" name="phone" value={formData.phone} onChange={handleFormChange} className={`w-full p-3 rounded-lg focus:ring-blue-500 ${tc.inputBg}`} placeholder="Para respuesta rápida" />
             </div>
-
-            <div className="mb-6 relative">
+            <div className="mb-6">
               <div className="flex justify-between items-center mb-1">
-                <label htmlFor="message" className={`block text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                  ¿En qué puedo ayudarte?
-                </label>
-                <button
-                  type="button"
-                  onClick={handleMagicDraft}
-                  disabled={aiLoading.draft || !formData.message}
-                  className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${theme === 'dark'
-                    ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30'
-                    : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
-                    } disabled:opacity-50`}
-                  title="Escribe una idea rápida y la IA la redactará formalmente por ti"
-                >
+                <label className={`block text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>¿En qué puedo ayudarte?</label>
+                <button type="button" onClick={handleMagicDraft} disabled={aiLoading.draft || !formData.message} className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${theme === 'dark' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-600'}`}>
                   {aiLoading.draft ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} />}
-                  {aiLoading.draft ? 'Redactando...' : 'Mejorar Texto con IA'}
+                  {aiLoading.draft ? 'Redactando...' : 'Mejorar con IA'}
                 </button>
               </div>
-              <textarea
-                id="message"
-                name="message"
-                rows="4"
-                value={formData.message}
-                onChange={handleFormChange}
-                required
-                className={`w-full p-3 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none ${tc.inputBg}`}
-                placeholder="Ej: Tengo un gimnasio y pierdo mucho tiempo controlando quién pagó y quién no..."
-              />
+              <textarea name="message" rows="4" value={formData.message} onChange={handleFormChange} required className={`w-full p-3 rounded-lg focus:ring-blue-500 resize-none ${tc.inputBg}`} placeholder="Ej: Necesito controlar mi inventario..." />
             </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full px-8 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all shadow-lg shadow-indigo-500/30 disabled:bg-indigo-400 disabled:cursor-not-allowed"
-            >
+            <button type="submit" disabled={isSubmitting} className="w-full px-8 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg disabled:bg-indigo-400">
               {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
             </button>
           </form>
-
           <div className="mt-10 flex justify-center gap-6">
-            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer"
-              className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}>
-              <Linkedin size={28} />
-            </a>
-            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer"
-              className={`transition-colors transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}>
-              <Code size={28} />
-            </a>
+            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}><Linkedin size={28} /></a>
+            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}><Code size={28} /></a>
           </div>
-
           <div className={`mt-16 pt-8 border-t ${theme === 'dark' ? 'border-slate-800 text-slate-600' : 'border-slate-200 text-slate-500'} text-sm`}>
-            <p>&copy; 2025 J Daniel Silvestre. Consultoría Estratégica & Desarrollo.</p>
+            <p>&copy; 2025 J Daniel Silvestre. Consultoría Estratégica.</p>
           </div>
         </div>
       </section>
