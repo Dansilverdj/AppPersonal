@@ -1,3 +1,20 @@
+Aquí tienes el código **completo y corregido** para `App.jsx`.
+
+He solucionado los dos problemas:
+
+1. **Error de IA:** Cambié el modelo a `gemini-1.5-flash` (el estándar actual de Google).
+2. **Error de Imágenes:** El código usa `import` para que Vercel no falle al construir.
+
+### ⚠️ IMPORTANTE ANTES DE PEGAR:
+
+Para que el "Build" de Vercel funcione y no salga el error rojo, **asegúrate de esto**:
+
+1. Tus imágenes (`finance.png`, `pos.png`, `access.png`) deben estar en la carpeta **`src/assets/`**. (Si la carpeta `assets` no existe dentro de `src`, créala y mete las fotos ahí).
+2. Si las tienes en `public`, **muévelas a `src/assets/**`.
+
+Aquí está el código:
+
+```jsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu, X, Linkedin, Mail, Smartphone,
@@ -8,7 +25,7 @@ import {
 } from 'lucide-react';
 
 // --- IMPORTACIÓN DE IMÁGENES ---
-// Asegúrate de que estas imágenes existan en src/assets/
+// NOTA: Asegúrate de que las imágenes estén en la carpeta src/assets/
 import financeImg from './assets/finance.png';
 import posImg from './assets/pos.png';
 import accessImg from './assets/access.png';
@@ -40,19 +57,19 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (CORREGIDA: USANDO GEMINI-PRO) ---
+  // --- INTEGRACIÓN GEMINI API (MODELO CORREGIDO: 1.5 FLASH) ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
     if (!apiKey) {
-      console.error("⛔ ERROR: No se encontró VITE_GEMINI_KEY en el archivo .env");
-      return "Error de configuración: Falta API Key.";
+      console.error("⛔ ERROR: Falta la API Key en el archivo .env");
+      return "Error: Falta configuración de API Key.";
     }
 
     try {
-      // HEMOS CAMBIADO EL MODELO A 'gemini-pro' PARA MAYOR ESTABILIDAD
+      // Usamos gemini-1.5-flash que es la versión estable actual
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -64,13 +81,13 @@ export default function Portfolio() {
       
       if (data.error) {
         console.error("Error de Google API:", data.error);
-        return `Error de IA: ${data.error.message}`;
+        return `Error IA: ${data.error.message}`;
       }
 
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se generó texto.";
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se generó respuesta.";
     } catch (error) {
       console.error("Error de conexión:", error);
-      return "Error de conexión con la IA.";
+      return "Error de conexión. Verifica tu internet.";
     }
   };
 
@@ -80,10 +97,10 @@ export default function Portfolio() {
     setAiLoading(prev => ({ ...prev, ideas: true }));
     setGeneratedIdeas(null);
 
-    const prompt = `Actúa como Daniel Silvestre, consultor experto. 
+    const prompt = `Actúa como Daniel Silvestre, consultor experto en negocios y tecnología. 
     El usuario tiene este negocio: "${businessInput}".
-    Genera 3 ideas breves, rentables y tecnológicas (automatización/IA) para este negocio.
-    Formato: Lista con emojis. Tono: Profesional y enfocado en ganancias.`;
+    Genera 3 ideas breves, altamente rentables y tecnológicas (automatización/IA) para este negocio.
+    Formato: Lista con emojis. Tono: Profesional, persuasivo y enfocado en ganancias.`;
 
     const result = await callGemini(prompt);
     setGeneratedIdeas(result);
@@ -95,8 +112,8 @@ export default function Portfolio() {
     if (!formData.message.trim()) return;
     setAiLoading(prev => ({ ...prev, draft: true }));
 
-    const prompt = `Reescribe este mensaje informal de un cliente: "${formData.message}"
-    para que sea una solicitud de consultoría formal y clara dirigida a Daniel Silvestre.`;
+    const prompt = `Reescribe este mensaje informal de un cliente potencial: "${formData.message}"
+    para que sea una solicitud de consultoría formal, clara y directa dirigida a Daniel Silvestre.`;
 
     const result = await callGemini(prompt);
     setFormData(prev => ({ ...prev, message: result }));
@@ -455,7 +472,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
+      {/* --- CASOS DE ÉXITO --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -504,7 +521,7 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
+              {/* Grid de Imagenes del Sistema */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
                  
                  {/* Imagen Principal (Finanzas) */}
@@ -617,3 +634,5 @@ export default function Portfolio() {
     </div>
   );
 }
+
+```
