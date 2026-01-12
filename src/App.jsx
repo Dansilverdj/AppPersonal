@@ -1,3 +1,8 @@
+¡Claro que sí! Aquí tienes el código **completo** y actualizado de `App.jsx`.
+
+Ya he realizado el cambio dentro del código: he sustituido el modelo "flash" por **`gemini-pro`**, que es la versión estándar y más compatible. Solo tienes que copiar todo, borrar lo que tienes en tu archivo `App.jsx` y pegar esto.
+
+```jsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu, X, Linkedin, Mail, Smartphone,
@@ -7,8 +12,8 @@ import {
   Database, Server, Cpu, BarChart3, Lock
 } from 'lucide-react';
 
-// --- IMPORTACIÓN DE IMÁGENES (SOLUCIÓN AL ERROR DE CARGA) ---
-// Asegúrate de que las fotos estén en la carpeta src/assets/
+// --- IMPORTACIÓN DE IMÁGENES ---
+// Asegúrate de que estas imágenes existan en src/assets/
 import financeImg from './assets/finance.png';
 import posImg from './assets/pos.png';
 import accessImg from './assets/access.png';
@@ -40,19 +45,19 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (MEJORADA PARA DEBUGGING) ---
+  // --- INTEGRACIÓN GEMINI API (CORREGIDA: USANDO GEMINI-PRO) ---
   const callGemini = async (prompt) => {
-    // Intenta leer la Key. Si no existe, avisa en consola.
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
     if (!apiKey) {
-      console.error("⛔ ERROR CRÍTICO: No se encontró VITE_GEMINI_KEY. Crea un archivo .env en la raíz.");
-      return "Error de configuración: Falta API Key (Revisa la consola F12).";
+      console.error("⛔ ERROR: No se encontró VITE_GEMINI_KEY en el archivo .env");
+      return "Error de configuración: Falta API Key.";
     }
 
     try {
+      // HEMOS CAMBIADO EL MODELO A 'gemini-pro' PARA MAYOR ESTABILIDAD
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -62,7 +67,6 @@ export default function Portfolio() {
       
       const data = await response.json();
       
-      // Si Google devuelve error (ej. Key inválida), lo mostramos
       if (data.error) {
         console.error("Error de Google API:", data.error);
         return `Error de IA: ${data.error.message}`;
@@ -70,7 +74,7 @@ export default function Portfolio() {
 
       return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se generó texto.";
     } catch (error) {
-      console.error("Error de red/conexión:", error);
+      console.error("Error de conexión:", error);
       return "Error de conexión con la IA.";
     }
   };
@@ -133,7 +137,7 @@ export default function Portfolio() {
     }
   };
 
-  // --- EFECTO CANVAS ---
+  // --- EFECTO CANVAS (OPTIMIZADO) ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -380,7 +384,7 @@ export default function Portfolio() {
       {/* --- TECH STACK --- */}
       <section className={`py-10 border-y ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} relative z-10`}>
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas que Domino</p>
+          <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas </p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-80">
             {/* React */}
             <div className="flex flex-col items-center gap-2 group">
@@ -552,15 +556,15 @@ export default function Portfolio() {
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina. Las ventas que no llegan. Y la falta de sistemas eficientes.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Optimizados hacia objetivos personalizados.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Hablamos de negocios. La honestidad es mi garantia.</p></div>
                   </li>
                 </ul>
               </div>
