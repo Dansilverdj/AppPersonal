@@ -1,8 +1,3 @@
-¡Claro que sí! Aquí tienes el código **completo** y actualizado de `App.jsx`.
-
-Ya he realizado el cambio dentro del código: he sustituido el modelo "flash" por **`gemini-pro`**, que es la versión estándar y más compatible. Solo tienes que copiar todo, borrar lo que tienes en tu archivo `App.jsx` y pegar esto.
-
-```jsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu, X, Linkedin, Mail, Smartphone,
@@ -384,7 +379,7 @@ export default function Portfolio() {
       {/* --- TECH STACK --- */}
       <section className={`py-10 border-y ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} relative z-10`}>
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas </p>
+          <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas que Domino</p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-80">
             {/* React */}
             <div className="flex flex-col items-center gap-2 group">
@@ -556,15 +551,15 @@ export default function Portfolio() {
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina. Las ventas que no llegan. Y la falta de sistemas eficientes.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por 6 años. Entiendo el estrés de la nómina.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Optimizados hacia objetivos personalizados.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Hablamos de negocios. La honestidad es mi garantia.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
