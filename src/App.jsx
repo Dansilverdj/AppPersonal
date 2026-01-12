@@ -7,6 +7,12 @@ import {
   Database, Server, Cpu, BarChart3, Lock
 } from 'lucide-react';
 
+// --- IMPORTACIÓN DE IMÁGENES (SOLUCIÓN AL ERROR DE CARGA) ---
+// Asegúrate de que las fotos estén en la carpeta src/assets/
+import financeImg from './assets/finance.png';
+import posImg from './assets/pos.png';
+import accessImg from './assets/access.png';
+
 export default function Portfolio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -18,10 +24,9 @@ export default function Portfolio() {
   const [generatedIdeas, setGeneratedIdeas] = useState(null);
 
   const canvasRef = useRef(null);
-  // OPTIMIZACIÓN: Usamos useRef para la posición del mouse
   const mousePosRef = useRef({ x: 0, y: 0 });
 
-  // --- Estado y Manejadores del Formulario de Contacto ---
+  // --- Estado Formulario ---
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,10 +40,15 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API ---
+  // --- INTEGRACIÓN GEMINI API (MEJORADA PARA DEBUGGING) ---
   const callGemini = async (prompt) => {
-    const apiKey = import.meta.env.VITE_GEMINI_KEY || "";
-    if (!apiKey) console.warn("Falta la API Key de Gemini.");
+    // Intenta leer la Key. Si no existe, avisa en consola.
+    const apiKey = import.meta.env.VITE_GEMINI_KEY;
+    
+    if (!apiKey) {
+      console.error("⛔ ERROR CRÍTICO: No se encontró VITE_GEMINI_KEY. Crea un archivo .env en la raíz.");
+      return "Error de configuración: Falta API Key (Revisa la consola F12).";
+    }
 
     try {
       const response = await fetch(
@@ -49,11 +59,19 @@ export default function Portfolio() {
           body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
         }
       );
+      
       const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || "Error al generar respuesta.";
+      
+      // Si Google devuelve error (ej. Key inválida), lo mostramos
+      if (data.error) {
+        console.error("Error de Google API:", data.error);
+        return `Error de IA: ${data.error.message}`;
+      }
+
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "No se generó texto.";
     } catch (error) {
-      console.error("Error calling Gemini:", error);
-      return "Hubo un error conectando con la IA.";
+      console.error("Error de red/conexión:", error);
+      return "Error de conexión con la IA.";
     }
   };
 
@@ -63,10 +81,10 @@ export default function Portfolio() {
     setAiLoading(prev => ({ ...prev, ideas: true }));
     setGeneratedIdeas(null);
 
-    const prompt = `Actúa como J Daniel Silvestre, consultor experto. 
+    const prompt = `Actúa como Daniel Silvestre, consultor experto. 
     El usuario tiene este negocio: "${businessInput}".
-    Genera 3 ideas breves y rentables de automatización para este negocio.
-    Formato: Lista con emojis. Tono: Profesional y directo al beneficio económico.`;
+    Genera 3 ideas breves, rentables y tecnológicas (automatización/IA) para este negocio.
+    Formato: Lista con emojis. Tono: Profesional y enfocado en ganancias.`;
 
     const result = await callGemini(prompt);
     setGeneratedIdeas(result);
@@ -79,7 +97,7 @@ export default function Portfolio() {
     setAiLoading(prev => ({ ...prev, draft: true }));
 
     const prompt = `Reescribe este mensaje informal de un cliente: "${formData.message}"
-    para que sea una solicitud de consultoría formal dirigida a Daniel Silvestre.`;
+    para que sea una solicitud de consultoría formal y clara dirigida a Daniel Silvestre.`;
 
     const result = await callGemini(prompt);
     setFormData(prev => ({ ...prev, message: result }));
@@ -115,7 +133,7 @@ export default function Portfolio() {
     }
   };
 
-  // --- EFECTO CANVAS (OPTIMIZADO) ---
+  // --- EFECTO CANVAS ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -218,7 +236,6 @@ export default function Portfolio() {
     if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Theme classes
   const themeClasses = {
     dark: {
       bg: 'bg-slate-950 text-slate-200 selection:bg-indigo-500',
@@ -360,7 +377,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- TECH STACK (NUEVO) --- */}
+      {/* --- TECH STACK --- */}
       <section className={`py-10 border-y ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'} relative z-10`}>
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas que Domino</p>
@@ -439,7 +456,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO (UPDATE CON IMAGENES) --- */}
+      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -488,29 +505,25 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema */}
+              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
-                 {/* IMPORTANTE: 
-                    Asegúrate de guardar tus capturas en la carpeta 'public/assets/' 
-                    con los nombres: finance.png, pos.png, access.png
-                 */}
                  
                  {/* Imagen Principal (Finanzas) */}
-                 <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group">
+                 <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
-                    <img src="/assets/finance.png" alt="Finanzas Dashboard" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                    <img src={financeImg} alt="Finanzas Dashboard" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                  </div>
 
                  <div className="grid grid-cols-2 gap-4">
                     {/* Imagen Secundaria 1 (POS/Tienda) */}
-                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group">
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
-                       <img src="/assets/pos.png" alt="Tienda POS" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                       <img src={posImg} alt="Tienda POS" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     {/* Imagen Secundaria 2 (Acceso) */}
-                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group">
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
-                       <img src="/assets/access.png" alt="Control Acceso" className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                       <img src={accessImg} alt="Control Acceso" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
                  </div>
               </div>
