@@ -119,7 +119,7 @@ export default function Portfolio() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitMessage('');
-    const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "[https://formspree.io/f/xldyyknb](https://formspree.io/f/xldyyknb)";
+    const formspreeEndpoint = import.meta.env.VITE_FORMSPREE_ENDPOINT || "https://formspree.io/f/xldyyknb";
 
     try {
       const response = await fetch(formspreeEndpoint, {
@@ -313,6 +313,7 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className={`md:hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} border-b`}>
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -462,7 +463,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO --- */}
+      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -511,17 +512,22 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema */}
+              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
+                 
+                 {/* Imagen Principal (Finanzas) */}
                  <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
                     <img src={financeImg} alt="Finanzas Dashboard" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                  </div>
+
                  <div className="grid grid-cols-2 gap-4">
+                    {/* Imagen Secundaria 1 (POS/Tienda) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
                        <img src={posImg} alt="Tienda POS" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
+                    {/* Imagen Secundaria 2 (Acceso) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
                        <img src={accessImg} alt="Control Acceso" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
@@ -608,8 +614,8 @@ export default function Portfolio() {
             </button>
           </form>
           <div className="mt-10 flex justify-center gap-6">
-            <a href="[https://www.linkedin.com/in/dansilver9](https://www.linkedin.com/in/dansilver9)" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}><Linkedin size={28} /></a>
-            <a href="[https://github.com/Dansilverdj](https://github.com/Dansilverdj)" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}><Code size={28} /></a>
+            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}><Linkedin size={28} /></a>
+            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}><Code size={28} /></a>
           </div>
           <div className={`mt-16 pt-8 border-t ${theme === 'dark' ? 'border-slate-800 text-slate-600' : 'border-slate-200 text-slate-500'} text-sm`}>
             <p>&copy; 2025 J Daniel Silvestre. Consultoría Estratégica.</p>
