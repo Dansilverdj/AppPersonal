@@ -39,7 +39,7 @@ export default function Portfolio() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  // --- INTEGRACIÓN GEMINI API (ESTRATEGIA MULTI-MODELO) ---
+  // --- INTEGRACIÓN GEMINI API (ACTUALIZADA A GEMINI 2.0/2.5) ---
   const callGemini = async (prompt) => {
     const apiKey = import.meta.env.VITE_GEMINI_KEY;
     
@@ -49,12 +49,11 @@ export default function Portfolio() {
       return simulateResponse(prompt);
     }
 
-    // LISTA DE MODELOS A PROBAR (Si uno falla, prueba el siguiente)
+    // LISTA DE MODELOS A PROBAR (Basada en tu lista disponible)
     const modelsToTry = [
-      "gemini-1.5-flash", 
-      "gemini-1.5-pro", 
-      "gemini-1.0-pro", 
-      "gemini-pro"
+      "gemini-2.5-flash",    // Tu modelo más nuevo y rápido
+      "gemini-2.0-flash",    // Respaldo estable
+      "gemini-flash-latest"  // Alias genérico por si acaso
     ];
 
     for (const model of modelsToTry) {
@@ -474,7 +473,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO --- */}
+      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -523,17 +522,22 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema */}
+              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
+                 
+                 {/* Imagen Principal (Finanzas) */}
                  <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
                     <img src={financeImg} alt="Finanzas Dashboard" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                  </div>
+
                  <div className="grid grid-cols-2 gap-4">
+                    {/* Imagen Secundaria 1 (POS/Tienda) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
                        <img src={posImg} alt="Tienda POS" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
+                    {/* Imagen Secundaria 2 (Acceso) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
                        <img src={accessImg} alt="Control Acceso" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
@@ -569,11 +573,11 @@ export default function Portfolio() {
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Automatizaciones eficientes.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Automatizacion eficiente.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Honestidad ante todo. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con honestidad. Hablamos de negocios.</p></div>
                   </li>
                 </ul>
               </div>
