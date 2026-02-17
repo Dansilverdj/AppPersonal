@@ -4,7 +4,7 @@ import {
   Terminal, Bot, Layout, CheckCircle2,
   GraduationCap, Sun, Moon, Code, Sparkles, Loader2, Lightbulb,
   ArrowRight, TrendingUp, Users, ShieldCheck, Quote,
-  Database, Server, Cpu, BarChart3, Lock
+  Database, Server, Cpu, BarChart3, Lock, MapPin
 } from 'lucide-react';
 
 // --- IMPORTACIÓN DE IMÁGENES ---
@@ -348,22 +348,21 @@ export default function Portfolio() {
               <span className="flex h-2 w-2 rounded-full bg-green-400 mr-2 animate-pulse"></span>
               Consultoría Abierta 2026
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg leading-tight">
-              Transformo Negocios con <br />
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6 text-white drop-shadow-lg leading-tight">
+              Inteligencia Artificial y procesos claros <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
-                Datos, Procesos e IA
+                para negocios reales
               </span>
             </h1>
             <p className={`text-xl md:text-2xl ${tc.text} mb-8 max-w-2xl mx-auto md:mx-0 font-light`}>
-              No solo desarrollo aplicaciones. <span className={`${tc.textHighlight} font-semibold`}>Diseño rentabilidad.</span><br />
-              Optimiza operaciones y reduce fugas de dinero con estrategias tecnológicas a medida.
+              Reduzco el trabajo manual y organizo tus operaciones de todos los días. Implemento herramientas tecnológicas prácticas que te ayudan a ahorrar tiempo, controlar tus recursos y proteger tu rentabilidad, sin complicaciones técnicas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <button onClick={() => scrollToSection('contact')} className="px-8 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg hover:shadow-blue-500/50 z-20 flex items-center justify-center gap-2">
-                Solicitar Diagnóstico <ArrowRight size={20} />
+                Hablemos de tu operación <ArrowRight size={20} />
               </button>
               <button onClick={() => scrollToSection('cases')} className={`px-8 py-3 rounded-lg border ${theme === 'dark' ? 'border-slate-700 bg-slate-900/50 text-slate-300' : 'border-slate-300 bg-white/50 text-slate-700'} font-medium transition-all backdrop-blur-sm z-20`}>
-                Ver Resultados
+                Casos de éxito
               </button>
             </div>
           </div>
@@ -399,32 +398,26 @@ export default function Portfolio() {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className={`text-sm font-semibold uppercase tracking-wider mb-6 ${tc.textMuted}`}>Tecnologías & Herramientas que Domino</p>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-80">
-            {/* React */}
             <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform"><Code size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>React / Web</span>
             </div>
-             {/* Python */}
              <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-400 group-hover:scale-110 transition-transform"><Terminal size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>Python</span>
             </div>
-             {/* SQL */}
              <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-slate-500/10 text-slate-400 group-hover:scale-110 transition-transform"><Database size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>SQL / Datos</span>
             </div>
-             {/* Automatización/Selenium */}
              <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform"><Bot size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>Selenium / IA</span>
             </div>
-             {/* Análisis/SPSS */}
              <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-green-500/10 text-green-400 group-hover:scale-110 transition-transform"><BarChart3 size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>SPSS / Analytics</span>
             </div>
-             {/* Postman/API */}
              <div className="flex flex-col items-center gap-2 group">
               <div className="p-3 rounded-lg bg-orange-500/10 text-orange-400 group-hover:scale-110 transition-transform"><Server size={32} /></div>
               <span className={`text-xs font-medium ${tc.text}`}>Postman / API</span>
@@ -437,43 +430,43 @@ export default function Portfolio() {
       <section id="services" className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-4`}>Soluciones Integrales</h2>
-            <p className={`max-w-2xl mx-auto ${tc.text}`}>Combino la administración tradicional con tecnología de punta para crear sistemas que funcionan solos.</p>
+            <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-4`}>¿En qué puedo ayudarte?</h2>
+            <p className={`max-w-2xl mx-auto ${tc.text}`}>Soluciones diseñadas para resolver los dolores más comunes de la operación diaria en tu empresa.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
               <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6"><TrendingUp className="w-8 h-8 text-purple-400" /></div>
-              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Consultoría de Procesos & IA</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Analizo tus flujos de trabajo para eliminar cuellos de botella. Implemento Chatbots y Agentes IA que trabajan 24/7.</p>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Automatización de Tareas Repetitivas</h3>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Dejamos que la tecnología se encargue de la captura de datos, los reportes rutinarios y los seguimientos básicos.</p>
               <ul className="text-sm text-slate-500 space-y-2">
                 <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Reducción de Costos Operativos</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Automatización de Tareas</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-purple-500" /> Más tiempo para crecer</li>
               </ul>
             </div>
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 relative shadow-lg`}>
-              <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Especialidad</div>
-              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6"><ShieldCheck className="w-8 h-8 text-blue-400" /></div>
-              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Calidad de Software (QA)</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Audito y mejoro la calidad de tus sistemas. Me aseguro de que tu software no falle cuando más lo necesitas.</p>
+              <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6"><Layout className="w-8 h-8 text-blue-400" /></div>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Control y Visibilidad de tu Negocio</h3>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Creamos tableros de control (dashboards) muy sencillos de usar. Para que, desde tu teléfono o computadora, sepas qué entra y sale.</p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Pruebas Automatizadas (Selenium)</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Estabilidad Garantizada</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Paneles Financieros en tiempo real</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-blue-500" /> Control de Inventarios exacto</li>
               </ul>
             </div>
             <div className={`p-8 rounded-2xl border ${tc.cardBg} transition-all duration-300 group hover:-translate-y-2 shadow-lg`}>
-              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6"><Layout className="w-8 h-8 text-emerald-400" /></div>
-              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Aplicaciones de Gestión</h3>
-              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Desarrollo aplicaciones de escritorio y paneles de control (Dashboards) para dueños de negocio que necesitan control total.</p>
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">Especialidad</div>
+              <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6"><Bot className="w-8 h-8 text-emerald-400" /></div>
+              <h3 className={`text-xl font-bold ${tc.textHighlight} mb-3`}>Servicio y Operación con IA</h3>
+              <p className={`text-sm mb-6 leading-relaxed ${tc.text}`}>Implementamos sistemas inteligentes que responden preguntas 24/7 o agilizan tus flujos de trabajo, asegurando que ningún proceso quede en el aire.</p>
               <ul className="text-sm text-slate-500 space-y-2">
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Paneles Financieros</li>
-                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Control de Inventarios & Accesos</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Asistentes Virtuales 24/7</li>
+                <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Sistemas que no fallan (QA)</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- CASOS DE ÉXITO (CORREGIDO CON IMPORTACIONES) --- */}
+      {/* --- CASOS DE ÉXITO --- */}
       <section id="cases" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
@@ -487,7 +480,6 @@ export default function Portfolio() {
 
           <div className={`rounded-3xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
             <div className="grid lg:grid-cols-2">
-              {/* Info */}
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <div className="flex items-center gap-2 mb-6">
                   <span className="px-3 py-1 text-xs font-bold rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20">FITNESS & GYM</span>
@@ -522,22 +514,16 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              {/* Grid de Imagenes del Sistema (USANDO VARIABLES IMPORTADAS) */}
               <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center`}>
-                 
-                 {/* Imagen Principal (Finanzas) */}
                  <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Dashboard Financiero</div>
                     <img src={financeImg} alt="Finanzas Dashboard" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                  </div>
-
                  <div className="grid grid-cols-2 gap-4">
-                    {/* Imagen Secundaria 1 (POS/Tienda) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Punto de Venta</div>
                        <img src={posImg} alt="Tienda POS" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
                     </div>
-                    {/* Imagen Secundaria 2 (Acceso) */}
                     <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
                        <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Acceso Biométrico</div>
                        <img src={accessImg} alt="Control Acceso" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
@@ -555,12 +541,12 @@ export default function Portfolio() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className={`text-3xl font-bold ${tc.textHighlight} mb-6 flex items-center gap-3`}>
-                <Terminal className="text-blue-500" /> Mi Filosofía
+                <Terminal className="text-blue-500" /> Mi Enfoque
               </h2>
               <div className={`space-y-4 leading-relaxed ${tc.text}`}>
-                <p>Muchos consultores entregan un PDF y se van. Muchos programadores entregan código y no entienden tu negocio.</p>
-                <p>Yo soy el punto medio. Como <strong className="text-indigo-500">Administrador</strong>, entiendo de flujos de caja y ROI. Como <strong className="text-blue-500">QA Engineer</strong>, entiendo de sistemas robustos.</p>
-                <p>No busco venderte la tecnología de moda. Busco implementar la herramienta exacta que hará que tu negocio sea más fácil de dirigir y más rentable.</p>
+                <p><strong>La tecnología debe ser una herramienta, no un dolor de cabeza.</strong></p>
+                <p>Mi perspectiva combina el rigor técnico con la realidad comercial. Entiendo que, al final del día, lo que verdaderamente importa es cuidar el flujo de caja, reducir los costos operativos y tener la certeza de que tus sistemas no van a fallar cuando más los necesitas.</p>
+                <p>No vengo a venderte la tecnología de moda, sino a analizar tu operación y construir la solución exacta que te permita dirigir tu empresa con mayor orden y tranquilidad.</p>
               </div>
             </div>
             <div>
@@ -569,15 +555,15 @@ export default function Portfolio() {
                 <ul className="space-y-4">
                   <li className="flex gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded text-green-500"><CheckCircle2 size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Visión de Dueño</strong><p className={`text-sm ${tc.textMuted}`}>Fui dueño de negocio por varios años. Entiendo el estrés de la nómina. Las ventas que no llegan.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Visión Comercial</strong><p className={`text-sm ${tc.textMuted}`}>Entiendo el estrés de la nómina y la operación diaria. Todo desarrollo debe tener un retorno de inversión claro.</p></div>
                   </li>
                   <li className="flex gap-3">
                     <div className="mt-1 bg-blue-500/20 p-1 rounded text-blue-500"><Code size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Calidad Técnica</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Nada de sistemas que se caen. Automatizacion eficiente.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Sistemas Robustos</strong><p className={`text-sm ${tc.textMuted}`}>Experiencia probando software crítico. Soluciones que funcionan, sin interrupciones que cuesten dinero.</p></div>
                   </li>
                    <li className="flex gap-3">
                     <div className="mt-1 bg-purple-500/20 p-1 rounded text-purple-500"><Users size={16}/></div>
-                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con honestidad. Hablamos de negocios.</p></div>
+                    <div><strong className={`${tc.textHighlight}`}>Trato Directo</strong><p className={`text-sm ${tc.textMuted}`}>Sin intermediarios. Con honestidad. Hablamos de negocios, no solo de código.</p></div>
                   </li>
                 </ul>
               </div>
@@ -589,8 +575,8 @@ export default function Portfolio() {
       {/* --- CONTACT --- */}
       <section id="contact" className={`relative z-10 py-20 ${tc.sectionBg1}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-6`}>Hablemos de tu Proyecto</h2>
-          <p className={`mb-10 max-w-xl mx-auto ${tc.text}`}>La primera consulta de diagnóstico es gratuita. Cuéntame qué te duele hoy en tu negocio.</p>
+          <h2 className={`text-3xl md:text-4xl font-bold ${tc.textHighlight} mb-6`}>Hablemos de tu operación</h2>
+          <p className={`mb-10 max-w-xl mx-auto ${tc.text}`}>Agenda una plática breve y sin compromiso. Cuéntame qué parte de tu operación te gustaría simplificar hoy.</p>
           <form onSubmit={handleSubmit} className={`p-8 rounded-xl border max-w-lg mx-auto text-left shadow-2xl ${theme === 'dark' ? 'bg-slate-900/90 border-slate-800' : 'bg-white/90 border-slate-200'}`}>
             {submitMessage && (
               <div className={`p-4 mb-4 text-sm rounded-lg ${submitMessage.includes('éxito') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
@@ -611,24 +597,34 @@ export default function Portfolio() {
             </div>
             <div className="mb-6">
               <div className="flex justify-between items-center mb-1">
-                <label className={`block text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>¿En qué puedo ayudarte?</label>
+                <label className={`block text-sm font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>¿En qué te puedo ayudar?</label>
                 <button type="button" onClick={handleMagicDraft} disabled={aiLoading.draft || !formData.message} className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${theme === 'dark' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-indigo-100 text-indigo-600'}`}>
                   {aiLoading.draft ? <Loader2 className="animate-spin" size={12} /> : <Sparkles size={12} />}
                   {aiLoading.draft ? 'Redactando...' : 'Mejorar con IA'}
                 </button>
               </div>
-              <textarea name="message" rows="4" value={formData.message} onChange={handleFormChange} required className={`w-full p-3 rounded-lg focus:ring-blue-500 resize-none ${tc.inputBg}`} placeholder="Ej: Necesito controlar mi inventario..." />
+              <textarea name="message" rows="4" value={formData.message} onChange={handleFormChange} required className={`w-full p-3 rounded-lg focus:ring-blue-500 resize-none ${tc.inputBg}`} placeholder="Ej: Me gustaría tener más control sobre mi inventario..." />
             </div>
             <button type="submit" disabled={isSubmitting} className="w-full px-8 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg disabled:bg-indigo-400">
               {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
             </button>
           </form>
-          <div className="mt-10 flex justify-center gap-6">
-            <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}><Linkedin size={28} /></a>
-            <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}><Code size={28} /></a>
+
+          {/* Información de contacto directa y redes sociales */}
+          <div className="mt-12 flex flex-col items-center gap-4">
+            <div className={`flex flex-col sm:flex-row items-center gap-4 text-sm ${tc.textMuted}`}>
+              <span className="flex items-center gap-2"><Mail size={16} className="text-blue-500" /> danielsilvestredj@gmail.com</span>
+              <span className="hidden sm:block text-slate-700">•</span>
+              <span className="flex items-center gap-2"><MapPin size={16} className="text-red-500" /> San Luis Potosí, México</span>
+            </div>
+            <div className="flex gap-6 mt-4">
+              <a href="https://www.linkedin.com/in/dansilver9" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'}`}><Linkedin size={28} /></a>
+              <a href="https://github.com/Dansilverdj" target="_blank" rel="noopener noreferrer" className={`transform hover:scale-110 ${theme === 'dark' ? 'text-slate-400 hover:text-purple-400' : 'text-slate-600 hover:text-purple-600'}`}><Code size={28} /></a>
+            </div>
           </div>
-          <div className={`mt-16 pt-8 border-t ${theme === 'dark' ? 'border-slate-800 text-slate-600' : 'border-slate-200 text-slate-500'} text-sm`}>
-            <p>&copy; 2025 J Daniel Silvestre. Consultoría Estratégica.</p>
+
+          <div className={`mt-12 pt-8 border-t ${theme === 'dark' ? 'border-slate-800 text-slate-600' : 'border-slate-200 text-slate-500'} text-sm`}>
+            <p>&copy; {new Date().getFullYear()} Daniel Silvestre. Consultoría Estratégica.</p>
           </div>
         </div>
       </section>
