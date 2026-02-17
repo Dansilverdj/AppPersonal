@@ -533,6 +533,65 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
+        {/* --- CASO DE ÉXITO 2: IDENTIDAD Y BRANDING CORPORATIVO --- */}
+          <div className={`mt-12 rounded-3xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
+            <div className="grid lg:grid-cols-2">
+              
+              {/* Imágenes (Invertimos el orden visual para hacer un efecto Zig-Zag) */}
+              <div className={`p-4 md:p-8 ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'} flex flex-col gap-4 justify-center order-2 lg:order-1`}>
+                 <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-700 relative group aspect-video">
+                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Manual de Identidad</div>
+                    <img src={brandMainImg} alt="Manual de Identidad Corporativa" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
+                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Aplicación Vehicular</div>
+                       <img src={brandVehicleImg} alt="Mockup Transporte" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="rounded-xl overflow-hidden shadow-lg border border-slate-700 relative group aspect-video">
+                       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded backdrop-blur-sm z-10">Papelería Corporativa</div>
+                       <img src={brandStationeryImg} alt="Mockup Papelería" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                 </div>
+              </div>
+
+              {/* Info de la Tarjeta */}
+              <div className="p-8 md:p-12 flex flex-col justify-center order-1 lg:order-2">
+                <div className="flex flex-wrap items-center gap-2 mb-6">
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-500/10 text-slate-500 border border-slate-500/20">LOGÍSTICA & FIRMAS LEGALES</span>
+                  <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">IDENTIDAD CORPORATIVA</span>
+                </div>
+                <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Estandarización Visual y Presencia de Marca</h3>
+                <div className="space-y-6 mb-8">
+                  <div>
+                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>El Reto</h4>
+                    <p className={`${tc.text} leading-relaxed`}>Empresas con sólida trayectoria comercial que operaban con una imagen desactualizada, lo que restaba peso y profesionalismo al momento de negociar con clientes corporativos de alto nivel.</p>
+                  </div>
+                  <div>
+                    <h4 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>La Solución</h4>
+                    <p className={`${tc.text} leading-relaxed`}>
+                      Desarrollo de <strong>Manuales de Identidad Corporativa</strong> completos. Desde el rediseño de logotipos hasta la estandarización para papelería, presencia web y rotulación de flotillas vehiculares.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4 border-t border-b py-6 mb-8 border-slate-700/50">
+                  <div className="text-center md:text-left">
+                    <div className="text-2xl font-bold text-purple-500">360°</div>
+                    <div className="text-xs text-slate-500">Aplicación Visual</div>
+                  </div>
+                  <div className="text-center md:text-left">
+                    <div className="text-2xl font-bold text-slate-500">100%</div>
+                    <div className="text-xs text-slate-500">Estandarización</div>
+                  </div>
+                  <div className="text-center md:text-left">
+                    <div className="text-2xl font-bold text-blue-500">+ Valor</div>
+                    <div className="text-xs text-slate-500">Percepción Comercial</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
       </section>
 
       {/* --- PHILOSOPHY --- */}
