@@ -582,7 +582,7 @@ export default function Portfolio() {
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="flex items-center gap-2 mb-6">
                     <span className="px-3 py-1 text-xs font-bold rounded-full bg-orange-500/10 text-orange-500 border border-orange-500/20">GYM & SERVICIOS</span>
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">SOFTWARE A MEDIDA</span>
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">OPCIÓN PERSONALIZADA</span>
                   </div>
                   <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Control de accesos y caja: F1rstGym</h3>
                   
@@ -594,7 +594,7 @@ export default function Portfolio() {
                     <div>
                       <h4 className={`text-xs font-bold uppercase tracking-wider mb-1 text-slate-500`}>La Solución</h4>
                       <p className={`${tc.text} text-sm leading-relaxed`}>
-                        Diseñamos **GymControl**, un software a la medida muy sencillo de usar que vinculó lectores biométricos en la entrada con un punto de venta en recepción y un tablero financiero básico.
+                        Diseñamos **GymControl**, una opción totalmente personalizada adaptada a los requerimientos específicos del cliente. Vinculamos lectores biométricos en la entrada con un punto de venta en recepción y un tablero financiero básico para un control absoluto.
                       </p>
                     </div>
                   </div>
@@ -637,19 +637,19 @@ export default function Portfolio() {
                 <div className="p-8 md:p-12 flex flex-col justify-center order-1 lg:order-2">
                   <div className="flex items-center gap-2 mb-6">
                     <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">RESTAURANTES, BAR & CAFÉS</span>
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">CHILLDRINKS POS</span>
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">OPCIÓN PERSONALIZADA</span>
                   </div>
                   <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Control total de mesas y caja: ChillDrinks</h3>
                   
                   <div className="space-y-5 mb-8">
                     <div>
                       <h4 className={`text-xs font-bold uppercase tracking-wider mb-1 text-slate-500`}>El Reto</h4>
-                      <p className={`${tc.text} text-sm leading-relaxed`}>Los meseros perdían tiempo valioso anotando comandas en papel y yendo a la barra. Esto ocasionaba errores en pedidos de bebidas, cuentas descuadradas en caja y clientes desesperados por la demora al pagar.</p>
+                      <p className={`${tc.text} text-sm leading-relaxed`}>El dueño escribía todos los pedidos sobre un bloc de notas de papel, lo que provocaba que se perdiera el control de su negocio, el inventario de bebidas y las ventas diarias.</p>
                     </div>
                     <div>
                       <h4 className={`text-xs font-bold uppercase tracking-wider mb-1 text-slate-500`}>La Solución</h4>
                       <p className={`${tc.text} text-sm leading-relaxed`}>
-                        Implementamos **ChillDrinks POS**, una aplicación comanda digital responsiva. El mesero registra el pedido (como cervezas, micheladas y snacks) directamente en la mesa. La orden se calcula al instante, actualiza el inventario en tiempo real y permite cobrar la cuenta en segundos con un solo botón.
+                        Implementamos **ChillDrinks POS**, un sistema adaptado a los requerimientos exactos del cliente como una opción personalizada. El mesero registra pedidos directamente desde una tablet, calculando la orden al instante, sincronizando stock en tiempo real y cobrando en segundos con un botón.
                       </p>
                     </div>
                   </div>
@@ -672,25 +672,25 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* --- CASO 3: ESTANDARIZACIÓN VISUAL --- */}
+            {/* --- CASO 3: LOGYDISA --- */}
             <div className={`rounded-3xl border overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'} shadow-2xl`}>
               <div className="grid lg:grid-cols-2">
                 <div className="p-8 md:p-12 flex flex-col justify-center">
                   <div className="flex flex-wrap items-center gap-2 mb-6">
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-500/10 text-slate-500 border border-slate-500/20">LOGÍSTICA & FIRMAS LEGALES</span>
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">IDENTIDAD DE MARCA</span>
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-slate-500/10 text-slate-500 border border-slate-500/20">LOGÍSTICA & TRANSPORTE</span>
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">OPCIÓN PERSONALIZADA</span>
                   </div>
-                  <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Estandarización de Imagen y Presencia Corporativa</h3>
+                  <h3 className={`text-3xl font-bold mb-6 ${tc.textHighlight}`}>Identidad y presencia corporativa: LOGYDISA</h3>
                   
                   <div className="space-y-5 mb-8">
                     <div>
                       <h4 className={`text-xs font-bold uppercase tracking-wider mb-1 text-slate-500`}>El Reto</h4>
-                      <p className={`${tc.text} text-sm leading-relaxed`}>Varias empresas operaban con un logotipo antiguo e inconsistente en sus camiones, facturas y web, restando credibilidad comercial al competir por contratos con grandes marcas.</p>
+                      <p className={`${tc.text} text-sm leading-relaxed`}>La empresa de transporte operaba con un logotipo antiguo e inconsistente en sus camiones, facturas y sitio web, restando credibilidad comercial al competir por contratos importantes con grandes corporativos.</p>
                     </div>
                     <div>
                       <h4 className={`text-xs font-bold uppercase tracking-wider mb-1 text-slate-500`}>La Solución</h4>
                       <p className={`${tc.text} text-sm leading-relaxed`}>
-                        Rediseñamos la marca y creamos un **Manual de Identidad** integral de fácil aplicación, abarcando papelería digital, rotulación vehicular comercial y consistencia web para su fuerza de ventas.
+                        Rediseñamos la marca por completo y creamos un manual de identidad integral como una opción personalizada y adaptada a sus requerimientos de negocio, abarcando rotulación vehicular para sus camiones, papelería digital y consistencia web.
                       </p>
                     </div>
                   </div>
